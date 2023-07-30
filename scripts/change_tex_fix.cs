@@ -1,15 +1,14 @@
-// #author silver1145
+// #author stars
 // #name ChangeTex Fix
 // #desc Avoid TBody.ChangeTex when file does not exist
 
 using UnityEngine;
 using HarmonyLib;
-using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Collections.Generic;
-
+using System.Security;
+using System.Security.Permissions;
 
 public static class LoadTestMaterial {
     static Harmony instance;
@@ -25,10 +24,40 @@ public static class LoadTestMaterial {
 
     [HarmonyPatch(typeof(TBody), "ChangeTex")]
     [HarmonyPrefix]
-    public static bool TBodyChangeTexPrefix(ref TBody __instance, string slotname, string filename) {
+    public static void ChangeTexPrefix(ref TBody __instance, string slotname, ref string filename, string prop_name) {
         int num = (int)TBody.hashSlotName[slotname];
         TBodySkin tbodySkin = __instance.goSlot[num];
         string file_name = filename.Replace("*", Path.GetFileNameWithoutExtension(tbodySkin.m_strModelFileName));
-        return GameUty.FileSystem.IsExistentFile(file_name);
+        if (GameUty.FileSystem.IsExistentFile(file_name))
+        {
+            return;
+        }
+        if (tbodySkin.obj != null)
+        {
+            SkinnedMeshRenderer componentInChildren = tbodySkin.obj.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (componentInChildren != null)
+            {
+                foreach (var m in componentInChildren.materials)
+                {
+                    Texture tex = m.GetTexture(prop_name);
+                    if (tex != null)
+                    {
+                        filename = Path.GetFileNameWithoutExtension(tex.name) + ".tex";
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(InfinityColorTextureCache), "UpdateTexture", new[] {typeof(Texture), typeof(MaidParts.PARTS_COLOR), typeof(RenderTexture)})]
+    [HarmonyPrefix]
+    public static void UpdateTexturePrefix(Texture base_tex, ref RenderTexture target_tex)
+    {
+        if (base_tex == null || target_tex == null)
+        {
+            return;
+        }
+        target_tex.name = base_tex.name;
     }
 }
