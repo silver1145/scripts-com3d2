@@ -1,4 +1,4 @@
-// #author stars
+// #author silver1145
 // #name ChangeTex Fix
 // #desc Avoid TBody.ChangeTex when file does not exist
 
