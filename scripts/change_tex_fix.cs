@@ -1,6 +1,6 @@
 // #author silver1145
 // #name ChangeTex Fix
-// #desc Avoid TBody.ChangeTex when file does not exist
+// #desc Fix TBody.ChangeTex when file does not exist
 
 using UnityEngine;
 using HarmonyLib;
@@ -10,24 +10,31 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 
-public static class LoadTestMaterial {
+public static class ChangeTexFix {
     static Harmony instance;
 
-    public static void Main() {
-        instance = Harmony.CreateAndPatchAll(typeof(LoadTestMaterial));
+    public static void Main()
+    {
+        instance = Harmony.CreateAndPatchAll(typeof(ChangeTexFix));
     }
 
-    public static void Unload() {
+    public static void Unload()
+    {
         instance.UnpatchAll(instance.Id);
         instance = null;
     }
 
     [HarmonyPatch(typeof(TBody), "ChangeTex")]
     [HarmonyPrefix]
-    public static void ChangeTexPrefix(ref TBody __instance, string slotname, ref string filename, string prop_name) {
+    public static void ChangeTexPrefix(ref TBody __instance, string slotname, Dictionary<string, byte[]> dicModTexData, ref string filename, string prop_name)
+    {
         int num = (int)TBody.hashSlotName[slotname];
         TBodySkin tbodySkin = __instance.goSlot[num];
         string file_name = filename.Replace("*", Path.GetFileNameWithoutExtension(tbodySkin.m_strModelFileName));
+        if (dicModTexData != null && dicModTexData.ContainsKey(filename))
+        {
+            return;
+        }
         if (GameUty.FileSystem.IsExistentFile(file_name))
         {
             return;
@@ -52,7 +59,7 @@ public static class LoadTestMaterial {
 
     [HarmonyPatch(typeof(InfinityColorTextureCache), "UpdateTexture", new[] {typeof(Texture), typeof(MaidParts.PARTS_COLOR), typeof(RenderTexture)})]
     [HarmonyPrefix]
-    public static void UpdateTexturePrefix(Texture base_tex, ref RenderTexture target_tex)
+    public static void UpdateTexturePrefix(Texture base_tex, RenderTexture target_tex)
     {
         if (base_tex == null || target_tex == null)
         {
