@@ -6,7 +6,7 @@ Some COM3D2 functional scripts
 
 | Script Name                    | Description                                     | Require                                                    |
 | ------------------------------ | ----------------------------------------------- | ---------------------------------------------------------- |
-| change_tex_fix                 | Avoid TBody.ChangeTex when file does not exist  | -                                                          |
+| change_tex_fix                 | Fix TBody.ChangeTex when file does not exist    | -                                                          |
 | extract_ks_scripts             | Extract *.ks scripts from game                  | -                                                          |
 | infinity_color_fix             | Fix InfinityColor on Alpha Channel and Add Mask | -                                                          |
 | npr_930_dpi_fix                | DPI Fix on 2K for NPRShader v930                | COM3D2.NPRShader.Plugin.dll(v930)                          |
