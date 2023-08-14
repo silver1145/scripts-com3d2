@@ -10,29 +10,36 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
-public static class ExtractKsScripts {
+public static class ExtractKsScripts
+{
     static string KS_PATH = "_ks";
     static bool _lock = false;
     static KeyCode TOGGLE_KEYCODE = KeyCode.E;
     static GameObject gameObject;
 
-    public static void Main() {
+    public static void Main()
+    {
         gameObject = new GameObject();
         gameObject.AddComponent<ExtractScripts>();
     }
 
-    public static void Unload() {
+    public static void Unload()
+    {
         GameObject.Destroy(gameObject);
         gameObject = null;
     }
 
-    class ExtractScripts : MonoBehaviour {
-        void Awake() {
+    class ExtractScripts : MonoBehaviour
+    {
+        void Awake()
+        {
             DontDestroyOnLoad(this);
         }
 
-        void Update() {
-            if (GameMain.Instance.GetNowSceneName() == "SceneTitle" && !GameMain.Instance.MainCamera.IsFadeProc() && Input.GetKeyDown(TOGGLE_KEYCODE) && !_lock) {
+        void Update()
+        {
+            if (GameMain.Instance.GetNowSceneName() == "SceneTitle" && !GameMain.Instance.MainCamera.IsFadeProc() && Input.GetKeyDown(TOGGLE_KEYCODE) && !_lock)
+            {
                 GameMain.Instance.SysDlg.Show("Export *.ks File?", SystemDialog.TYPE.YES_NO, delegate
                 {
                     _lock = true;

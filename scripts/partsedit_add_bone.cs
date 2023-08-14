@@ -12,14 +12,15 @@ using System.Collections.Generic;
 using CM3D2.PartsEdit.Plugin;
 
 
-public static class PartsEditAddBone {
-    static readonly List<string> muneBoneList = new List<string>(){
+public static class PartsEditAddBone
+{
+    static readonly List<string> muneBoneList = new List<string>() {
         "Mune_L",
         "Mune_L_sub",
         "Mune_R",
         "Mune_R_sub"
     };
-    static readonly List<string> hipBoneList = new List<string>(){
+    static readonly List<string> hipBoneList = new List<string>() {
         "Hip_L",
         "Hip_R"
     };
@@ -28,21 +29,24 @@ public static class PartsEditAddBone {
     static bool editHip;
     static bool editHipMR;
 
-    public static void Main() {
+    public static void Main()
+    {
         instance = Harmony.CreateAndPatchAll(typeof(PartsEditAddBone));
         editMune = false;
         editHip = false;
         editHipMR = false;
     }
 
-    public static void Unload() {
+    public static void Unload()
+    {
         instance.UnpatchAll(instance.Id);
         instance = null;
     }
 
     [HarmonyPatch(typeof(BoneEdit), "JudgeVisibleBone")]
     [HarmonyPostfix]
-    static void PartsEditVisiblePostfix(BoneRendererAssist bra, ref bool __result) {
+    static void PartsEditVisiblePostfix(BoneRendererAssist bra, ref bool __result)
+    {
         if(muneBoneList.Contains(bra.transform.name) || hipBoneList.Contains(bra.transform.name))
         {
             __result = true;
@@ -51,7 +55,8 @@ public static class PartsEditAddBone {
 
     [HarmonyPatch(typeof(BoneEdit), "BoneClick")]
     [HarmonyPostfix]
-    static void PartsEditModifyBoneClick(Transform bone) {
+    static void PartsEditModifyBoneClick(Transform bone)
+    {
         if (!editMune && muneBoneList.Contains(bone.name))
         {
             editMune = true;
@@ -69,7 +74,8 @@ public static class PartsEditAddBone {
 
     [HarmonyPatch(typeof(BoneGizmoRenderer), "rotTargetTrs", MethodType.Getter)]
     [HarmonyPostfix]
-    static void PartsEditModifyGetter(ref Transform __result) {
+    static void PartsEditModifyGetter(ref Transform __result)
+    {
         if (__result.name == "Hip_L")
         {
             __result = __result.parent.parent.parent.parent.GetChild(1).Find("Bip01/Bip01 Pelvis/Hip_L");
@@ -82,7 +88,8 @@ public static class PartsEditAddBone {
 
     [HarmonyPatch(typeof(TBody), "MoveMomoniku")]
     [HarmonyPrefix]
-    static bool TBodyModifyPreMoveMomoniku(ref TBody __instance) {
+    static bool TBodyModifyPreMoveMomoniku(ref TBody __instance)
+    {
         if (editMune && (__instance.jbMuneL.enabled || __instance.jbMuneR.enabled))
         {
             __instance.maid.GetAnimation().Stop();

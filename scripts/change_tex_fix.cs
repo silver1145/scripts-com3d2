@@ -10,7 +10,8 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 
-public static class ChangeTexFix {
+public static class ChangeTexFix
+{
     static Harmony instance;
 
     public static void Main()
