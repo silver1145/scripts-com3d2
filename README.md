@@ -21,9 +21,9 @@ Some scripts need to do additional steps according to the `Note` section.
 
 ### 1. change_tex_fix
 
-Some mod textures do not follow the naming rules, such as `test_hair.tex`, this script is designed to load these textures and handle infinite colors normally, and it is recommended to install COM3D2.ExtendedErrorHandling.
+Some mod textures do not follow the naming rules, such as `test_hair.tex`, this script is designed to load these textures and handle infinity colors normally, and it is recommended to install COM3D2.ExtendedErrorHandling.
 
-Previously, these textures could only be loaded through `COM3D2.StopQuitting.Plugin`(without `COM3D2.ExtendedErrorHandling`), which interrupted the entire loading process by raising an exception, and the infinite color was not handled.
+Previously, these textures could only be loaded through `COM3D2.StopQuitting.Plugin`(without `COM3D2.ExtendedErrorHandling`), which interrupted the entire loading process by raising an exception, and the infinity color was not handled.
 
 ### 2. extract_ks_scripts
 
@@ -34,13 +34,13 @@ Press the E key on the main interface to start extracting.
 
 * Note: Download `resources/InfinityColor_Fix` folder and move to `game_root_directory/BepinEx/config/`
 
-Allow infinite colors to handle transparent channels.
+Allow infinity colors to handle transparent channels.
 
-Add Mask texture for infinite color.
+Add Mask texture for infinity color.
 Only need to create {name}.infinity_mask.tex for the texture {name}.tex that needs mask.
-The grayscale [0-1] in the Mask texture determines whether the infinite color is displayed, 0 means that the original texture is not affected by the infinite color, and 1 means that the infinite color texture is displayed. The grayscale is allowed to be an intermediate value for mixing.
+The grayscale [0-1] in the Mask texture determines whether the infinity color is displayed, 0 means that the original texture is not affected by the infinity color, and 1 means that the infinity color texture is displayed. The grayscale is allowed to be an intermediate value for mixing.
 
-If you use transparency and infinite color mask at the same position of the texture, adjusting the infinite color value multiple times will cause the color of the transparent area to be mixed, switch to other items and then switch back to reload the infinite color texture.
+If `COM3D2.MaidLoader` is installed, the infinity color Mask texture will also be refreshed when the Mod Refresh button is clicked.
 
 ### 4. npr_930_dpi_fix
 

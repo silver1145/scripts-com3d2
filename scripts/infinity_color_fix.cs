@@ -7,14 +7,17 @@ using HarmonyLib;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 
-public static class InfinityColorFix {
+public static class InfinityColorFix
+{
     static Harmony instance;
     static AssetBundle assetBundle;
     static string shaderFile = "BepinEx/config/InfinityColor_Fix/infinitycolor_fix";
     static Dictionary<string, Texture2D> baseTexDict;
     static Dictionary<string, Texture2D> maskTexDict;
+    static HashSet<Material> materialToMask;
     static Material maskMaterial;
 
     public static void Main()
@@ -30,7 +33,7 @@ public static class InfinityColorFix {
     {
         instance.UnpatchAll(instance.Id);
         instance = null;
-        GameUty.m_matSystem[(int)GameUty.SystemMaterial.InfinityColor] = null;
+        // GameUty.m_matSystem[(int)GameUty.SystemMaterial.InfinityColor] = null;
         GameUty.m_matSystem[(int)GameUty.SystemMaterial.TexTo8bitTex] = null;
         assetBundle.Unload(false);
         assetBundle = null;
@@ -39,6 +42,8 @@ public static class InfinityColorFix {
         baseTexDict = null;
         maskTexDict.Clear();
         maskTexDict = null;
+        materialToMask.Clear();
+        materialToMask = null;
     }
 
     public static bool LoadAssetBundle()
@@ -48,8 +53,8 @@ public static class InfinityColorFix {
             try
             {
                 assetBundle = AssetBundle.LoadFromFile(shaderFile);
-                Material material1 = assetBundle.LoadAsset("InfinityColor", typeof(Material)) as Material;
-                GameUty.m_matSystem[(int)GameUty.SystemMaterial.InfinityColor] = material1;
+                // Material material1 = assetBundle.LoadAsset("InfinityColor", typeof(Material)) as Material;
+                // GameUty.m_matSystem[(int)GameUty.SystemMaterial.InfinityColor] = material1;
                 Material material2 = assetBundle.LoadAsset("TexTo8bitTex", typeof(Material)) as Material;
                 GameUty.m_matSystem[(int)GameUty.SystemMaterial.TexTo8bitTex] = material2;
                 maskMaterial = assetBundle.LoadAsset("InfinityColorMask", typeof(Material)) as Material;
@@ -67,7 +72,7 @@ public static class InfinityColorFix {
         return false;
     }
 
-    public static void LoadMaskTex()
+    public static void LoadMaskTex(bool countNum = false)
     {
         if (baseTexDict == null)
         {
@@ -77,8 +82,13 @@ public static class InfinityColorFix {
         {
             maskTexDict = new Dictionary<string, Texture2D>();
         }
+        if (materialToMask == null)
+        {
+            materialToMask = new HashSet<Material>();
+        }
         baseTexDict.Clear();
         maskTexDict.Clear();
+        materialToMask.Clear();
         
         var Files = Directory.GetFiles(BepInEx.Paths.GameRootPath + "\\Mod", "*.*", SearchOption.AllDirectories).Where(t => t.ToLower().EndsWith(".infinity_mask.tex")).ToArray();
         for (int i = 0; i < Files.Count(); i++)
@@ -96,6 +106,10 @@ public static class InfinityColorFix {
                 Debug.LogWarning($"Mask without Base Texture: {mask_name}");
             }
         }
+        if (countNum)
+        {
+            Debug.Log($"Load InfinityColor Mask Textures: {baseTexDict.Count}");
+        }
     }
 
     [HarmonyPatch(typeof(RenderTextureCache), "GetTexture")]
@@ -103,6 +117,20 @@ public static class InfinityColorFix {
     public static void GetTexturePrefix(ref RenderTextureFormat tex_format)
     {
         tex_format = RenderTextureFormat.ARGB32;
+    }
+
+    [HarmonyPatch(typeof(InfinityColorTextureCache), "UpdateTexture", new[] {typeof(Texture), typeof(MaidParts.PARTS_COLOR), typeof(RenderTexture)})]
+    [HarmonyPrefix]
+    public static void UpdateTexturePrefix(Texture base_tex, RenderTexture target_tex)
+    {
+        if (base_tex == null || target_tex == null)
+        {
+            return;
+        }
+        RenderTexture active = RenderTexture.active;
+        RenderTexture.active = target_tex;
+        GL.Clear(true, true, Color.clear);
+        RenderTexture.active = active;
     }
 
     [HarmonyPatch(typeof(InfinityColorTextureCache), "UpdateTexture", new[] {typeof(Texture), typeof(MaidParts.PARTS_COLOR), typeof(RenderTexture)})]
@@ -167,11 +195,11 @@ public static class InfinityColorFix {
                     {
                         if (baseTexDict.ContainsKey(tex.name))
                         {
-                            m.SetInt("InfinityMask", 1);
+                            materialToMask.Add(m);
                             return;
                         }
-                        if (prop_name == "_ToonRamp" && GameUty.FileSystem.IsExistentFile(tex.name))
-                        { 
+                        if (materialToMask.Contains(m) && prop_name == "_ToonRamp" && GameUty.FileSystem.IsExistentFile(tex.name))
+                        {
                             Texture2D tex2d = ImportCM.CreateTexture(tex.name);
                             m.SetTexture(prop_name, tex2d);
                         }
@@ -179,5 +207,51 @@ public static class InfinityColorFix {
                 }
             }
         }
+    }
+}
+
+public static class MaidLoaderRefresh {
+    static Harmony instance;
+    static bool patched = false;
+
+    public static void Main()
+    {
+        DoPatch();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
+    }
+
+    public static void Unload()
+    {
+        instance.UnpatchAll(instance.Id);
+        instance = null;
+    }
+
+    public static void DoPatch()
+    {
+        try
+        {
+            instance = new Harmony("MaidLoaderRefresh");
+            var mOriginal = AccessTools.Method(Type.GetType("COM3D2.MaidLoader.RefreshMod, COM3D2.MaidLoader"), "RefreshCo");
+            var mPrefix = SymbolExtensions.GetMethodInfo(() => RefreshCoPrefix());
+            instance.Patch(mOriginal, new HarmonyMethod(mPrefix));
+            patched = true;
+        }
+        catch (Exception e)
+        {
+        }
+    }
+
+    private static void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+    {
+        if (!patched)
+        {
+            patched = true;
+            DoPatch();
+        }
+    }
+
+    public static void RefreshCoPrefix()
+    {
+        InfinityColorFix.LoadMaskTex(true);
     }
 }
