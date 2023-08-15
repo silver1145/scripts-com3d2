@@ -40,7 +40,8 @@ public static class WrapModeExtendSC
         var loc = il.DeclareLocal(typeof(TextureWrapMode));
         var target = AccessTools.PropertySetter(typeof(Texture), "wrapMode");
         foreach(var ins in instrs) {
-            if(ins.opcode == OpCodes.Callvirt && ((MethodInfo) ins.operand == target)){
+            if(ins.opcode == OpCodes.Callvirt && ((MethodInfo) ins.operand == target))
+            {
                 yield return new CodeInstruction(OpCodes.Stloc, loc);
                 yield return new CodeInstruction(OpCodes.Dup);
                 yield return new CodeInstruction(OpCodes.Ldloc, loc);

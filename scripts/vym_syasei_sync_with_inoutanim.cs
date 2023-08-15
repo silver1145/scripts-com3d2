@@ -42,12 +42,15 @@ public static class SyaseiSync
     [HarmonyPostfix]
     public static void IsShootingPostfix(ref InOutAnimation __instance, ref bool __result)
     {
-        if (!__result) {
+        if (!__result)
+        {
             if (isSyasei.TryGetValue(__instance.mediator.TargetMaid, out bool value))
             {
                 isShooting = value;
             }
-        } else {
+        }
+        else
+        {
             isShooting = true;
         }
     }
@@ -56,7 +59,8 @@ public static class SyaseiSync
     [HarmonyPostfix]
     public static void GetCurrentTexPostfix(ref InOutAnimation.FlipAnim __instance, ref Texture2D __result)
     {
-        if (isShooting) {
+        if (isShooting)
+        {
             __result = !__instance.TextureLoadedEx ? Texture2D.blackTexture : __instance.texturesEx[Mathf.RoundToInt((__instance.texturesEx.Length - 1) * Mathf.InverseLerp(0, __instance.textures.Length - 1, __instance.CurrentFrame))];
         }
     }
