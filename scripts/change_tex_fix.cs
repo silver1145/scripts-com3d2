@@ -50,7 +50,11 @@ public static class ChangeTexFix
                     Texture tex = m.GetTexture(prop_name);
                     if (tex != null)
                     {
-                        filename = Path.GetFileNameWithoutExtension(tex.name) + ".tex";
+                        file_name = Path.GetFileNameWithoutExtension(tex.name) + ".tex";
+                        if (GameUty.FileSystem.IsExistentFile(file_name))
+                        {
+                            filename = file_name;
+                        }
                         return;
                     }
                 }
