@@ -236,7 +236,7 @@ public static class MaidLoaderRefresh {
             instance.Patch(mOriginal, new HarmonyMethod(mPrefix));
             patched = true;
         }
-        catch (Exception e)
+        finally
         {
         }
     }
