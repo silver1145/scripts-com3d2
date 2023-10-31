@@ -14,6 +14,8 @@ Some COM3D2 functional scripts
 | partsedit_add_bone             | Make Mune & Hip Bone Moveable and Scaleable     | COM3D2.PartsEdit.Plugin                                    |
 | vym_syasei_sync_with_inoutanim | Vym Syasei Sync With Inoutanim                  | COM3D2.VibeYourMaid.Plugin<br>COM3D2.InOutAnimation.Plugin |
 | wrap_mode_extend_sc            | Make textures repeated for SceneCapture         | COM3D2.SceneCapture.Plugin                                 |
+| slot_change                    | Allow All Slots to Use Body Bone                | -                                                          |
+| npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin           | COM3D2.NPRShader.Plugin                                    |
 
 ## Install
 
@@ -28,7 +30,7 @@ Previously, these textures could only be loaded through `COM3D2.StopQuitting.Plu
 
 ### dcm_sync_anm
 
-When clicking the play button of `COM3D2.DanceCameraMotion.Plugin`, the object anm will be synchronized to frame 0. If `COM3D2.MovieTexture.Plugin` is installed, the texture will also be synchronized.
+When clicking the play button of `COM3D2.DanceCameraMotion.Plugin`, the item anm will be synchronized to frame 0 (also support SceneCapture). If `COM3D2.MovieTexture.Plugin` is installed, the texture will also be synchronized.
 Also added the DCM play shortcut key "`".
 
 ### extract_ks_scripts
@@ -63,4 +65,16 @@ Allow Vym Syasei to sync With Inoutanim.
 ### wrap_mode_extend_sc
 
 Make textures repeated for SceneCapture.
-Copy from `wrap_mode_extend` (by ghorsington)
+Copy from `wrap_mode_extend` (by ghorsington).
+
+### slot_change
+
+Allow All Slots to Use Body Bone.
+Just rename `{origin}.model` to `{origin}.bodybone.model`.
+
+### NPRShader Addition
+
+* Note: Download `resources/NPRShader` folder and move to `game_root_directory/Sybaris/UnityInjector/Config`
+
+Add Shader to `COM3D2.NPRShader.Plugin`.
+[Shader Description](./resources/NPRShader/ShaderList.md)
