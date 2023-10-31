@@ -136,3 +136,61 @@ public static class MovieTextureReset {
         resetMethod?.Invoke(null, null);
     }
 }
+
+public static class SceneCapturePatch {
+    static Harmony instance;
+    static bool patched = false;
+
+    public static void Main()
+    {
+        DoPatch();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
+    }
+
+    public static void Unload()
+    {
+        instance.UnpatchAll(instance.Id);
+        instance = null;
+    }
+
+    public static void DoPatch()
+    {
+        try
+        {
+            instance = new Harmony("SceneCapturePatch");
+            Type typeItemAnimation = Type.GetType("CM3D2.SceneCapture.Plugin.ItemAnimation, COM3D2.SceneCapture.Plugin");
+            var mOriginal = AccessTools.Method(typeItemAnimation, "AnimationPlay");
+            MethodInfo mPostfix = typeof(SceneCapturePatch).GetMethod("AnimationPlayPostfix");
+            instance.Patch(mOriginal, postfix: new HarmonyMethod(mPostfix));
+            patched = true;
+        }
+        finally
+        {
+        }
+    }
+
+    private static void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+    {
+        if (!patched)
+        {
+            patched = true;
+            DoPatch();
+        }
+    }
+
+    public static void AnimationPlayPostfix(ref object __instance, string f_strAnimName, ref bool __result)
+    {
+        if (__result)
+        {
+            DCMSyncAnm.CleanAnm();
+            Type objectType = __instance.GetType();
+            FieldInfo fieldInfo = objectType.GetField("m_animItem", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (fieldInfo != null)
+            {
+                Animation animItemValue = (Animation)fieldInfo.GetValue(__instance);
+                DCMSyncAnm.anmStates.Add(animItemValue[f_strAnimName]);
+            }
+            
+        }
+    }
+}
