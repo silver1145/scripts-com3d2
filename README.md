@@ -72,7 +72,7 @@ Copy from `wrap_mode_extend` (by ghorsington).
 Allow All Slots to Use Body Bone.
 Just rename `{origin}.model` to `{origin}.bodybone.model`.
 
-### NPRShader Addition
+### npr_addition
 
 * Note: Download `resources/NPRShader` folder and move to `game_root_directory/Sybaris/UnityInjector/Config`
 
