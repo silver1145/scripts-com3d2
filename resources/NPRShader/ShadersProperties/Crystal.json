@@ -1,0 +1,22 @@
+{
+    "BASEFRPROP": [
+        "_Metallic",
+        "_Gloss",
+        "_Repetition",
+        "_ColorLoop",
+        "_Width",
+        "_ColoeLevel",
+        "_PasutelColor",
+        "_Distortion",
+        "_ChromaticAberration",
+        "_Cutoff"
+    ],
+    "BASECOLORPROP": [
+        "_BasaColor",
+        "_SurfaceClolr"
+    ],
+    "VECTORPROP": [],
+    "TOGGLEPROP": [
+        "_LightCompletion"
+    ]
+}
