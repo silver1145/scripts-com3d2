@@ -17,7 +17,7 @@ Some COM3D2 functional scripts
 | slot_change                    | Allow All Slots to Use Body Bone                 | -                                                          |
 | npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                    |
 | vym_enhance                    | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                 |
-| mipmap_extend                  | enable Mipmap for textures with `mipmap` in name | -                                                          |
+| mipmap_extend                  | Enable Mipmap for textures with `mipmap` in name | -                                                          |
 
 ## Install
 
