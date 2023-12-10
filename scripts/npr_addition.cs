@@ -109,6 +109,19 @@ public static class NPRShaderAdd {
         return _TOGGLEPROP.Contains(prop);
     }
 
+    public static bool IsKeyword(string prop, Material m)
+    {
+        if (m.shader == null || m.shader.name.ToLower().Contains("nprtoon"))
+        {
+            return true;
+        }
+        if (Array.Exists(_SHADERKEYWORD, element => element == prop))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static Color CorrectHDRColor(Color inColor)
     {
         if (!((bool?)(HDREnabled?.GetValue(null))).GetValueOrDefault())
@@ -147,8 +160,14 @@ public static class NPRShaderAdd {
         CodeMatch[] matchSetColor = {
             new CodeMatch(OpCodes.Callvirt, typeof(Material).GetMethod("SetColor", new[] {typeof(string), typeof(Color)}))
         };
-        codeMatcher.MatchForward(false, matchSetColor);
-        codeMatcher.InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("CorrectHDRColor")));
+        codeMatcher.MatchForward(false, matchSetColor)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("CorrectHDRColor")));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldstr, "Toggle"))
+            .Advance(2)
+            .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(-3)))
+            .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(4)))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("IsKeyword")))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.And));
         return codeMatcher.InstructionEnumeration();
     }
 
@@ -156,7 +175,6 @@ public static class NPRShaderAdd {
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> OnGUITranspiler(IEnumerable<CodeInstruction> instructions)
     {
-        List<CodeInstruction> instructionList = new List<CodeInstruction>(instructions);
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
         CodeMatch[] matchListRectWidth = {
             new CodeMatch(OpCodes.Call),
@@ -250,5 +268,16 @@ public static class NPRShaderAdd {
     public static IEnumerable<CodeInstruction> ObjectShowPaneTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         return ShowPaneTranspiler(instructions, generator);
+    }
+
+    [HarmonyPatch(typeof(TBody), "MulTexSet")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> MulTexSetTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        return codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Brfalse))
+            .Advance(1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ret))
+            .InstructionEnumeration();
     }
 }
