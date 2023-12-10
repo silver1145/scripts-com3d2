@@ -4,18 +4,20 @@ Some COM3D2 functional scripts
 
 ## Description
 
-| Script Name                    | Description                                     | Require                                                    |
-| ------------------------------ | ----------------------------------------------- | ---------------------------------------------------------- |
-| change_tex_fix                 | Fix TBody.ChangeTex when file does not exist    | -                                                          |
-| dcm_sync_anm                   | DCM Sync With Item Anm and MovieTexture         | COM3D2.DanceCameraMotion.Plugin                            |
-| extract_ks_scripts             | Extract *.ks scripts from game                  | -                                                          |
-| infinity_color_fix             | Fix InfinityColor on Alpha Channel and Add Mask | -                                                          |
-| npr_930_dpi_fix                | DPI Fix on 2K for NPRShader v930                | COM3D2.NPRShader.Plugin.dll(v930)                          |
-| partsedit_add_bone             | Make Mune & Hip Bone Moveable and Scaleable     | COM3D2.PartsEdit.Plugin                                    |
-| vym_syasei_sync_with_inoutanim | Vym Syasei Sync With Inoutanim                  | COM3D2.VibeYourMaid.Plugin<br>COM3D2.InOutAnimation.Plugin |
-| wrap_mode_extend_sc            | Make textures repeated for SceneCapture         | COM3D2.SceneCapture.Plugin                                 |
-| slot_change                    | Allow All Slots to Use Body Bone                | -                                                          |
-| npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin           | COM3D2.NPRShader.Plugin                                    |
+| Script Name                    | Description                                      | Require                                                    |
+| ------------------------------ | ------------------------------------------------ | ---------------------------------------------------------- |
+| change_tex_fix                 | Fix TBody.ChangeTex when file does not exist     | -                                                          |
+| dcm_sync_anm                   | DCM Sync With Item Anm and MovieTexture          | COM3D2.DanceCameraMotion.Plugin                            |
+| extract_ks_scripts             | Extract *.ks scripts from game                   | -                                                          |
+| infinity_color_fix             | Fix InfinityColor on Alpha Channel and Add Mask  | -                                                          |
+| npr_930_dpi_fix                | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin.dll(v930)                          |
+| partsedit_add_bone             | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                    |
+| vym_syasei_sync_with_inoutanim | Vym Syasei Sync With Inoutanim                   | COM3D2.VibeYourMaid.Plugin<br>COM3D2.InOutAnimation.Plugin |
+| wrap_mode_extend_sc            | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                 |
+| slot_change                    | Allow All Slots to Use Body Bone                 | -                                                          |
+| npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                    |
+| vym_enhance                    | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                 |
+| mipmap_extend                  | enable Mipmap for textures with `mipmap` in name | -                                                          |
 
 ## Install
 
@@ -78,3 +80,11 @@ Just rename `{origin}.model` to `{origin}.bodybone.model`.
 
 Add Shader to `COM3D2.NPRShader.Plugin`.
 [Shader Description](./resources/NPRShader/ShaderList.md)
+
+### vym_enhance
+
+`COM3D2.VibeYourMaid.Plugin` function enhance & potential error fix.
+
+### mipmap_extend
+
+All texture with `mipmap` in the name will enable Mipmap.
