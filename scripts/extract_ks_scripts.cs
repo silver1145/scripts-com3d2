@@ -3,12 +3,8 @@
 // #desc Extract *.ks scripts from game
 
 using UnityEngine;
-using HarmonyLib;
 using System;
 using System.IO;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Collections.Generic;
 
 public static class ExtractKsScripts
 {

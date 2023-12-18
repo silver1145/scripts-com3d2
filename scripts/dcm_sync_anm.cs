@@ -6,8 +6,6 @@
 using UnityEngine;
 using HarmonyLib;
 using System;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using COM3D2.DanceCameraMotion.Plugin;

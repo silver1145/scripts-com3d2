@@ -6,8 +6,6 @@
 using UnityEngine;
 using HarmonyLib;
 using System;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Collections.Generic;
 using CM3D2.PartsEdit.Plugin;
 

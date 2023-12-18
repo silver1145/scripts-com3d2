@@ -5,10 +5,6 @@
 using UnityEngine;
 using HarmonyLib;
 using System;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Collections.Generic;
-using COM3D2.NPRShader.Plugin;
 
 public static class NPRShaderDpiFix
 {

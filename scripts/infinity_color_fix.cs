@@ -7,7 +7,6 @@ using HarmonyLib;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
 
 public static class InfinityColorFix
@@ -235,6 +234,7 @@ public static class MaidLoaderRefresh {
             var mPrefix = SymbolExtensions.GetMethodInfo(() => RefreshCoPrefix());
             instance.Patch(mOriginal, new HarmonyMethod(mPrefix));
             patched = true;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneLoaded;
         }
         finally
         {

@@ -4,9 +4,6 @@
 
 using UnityEngine;
 using HarmonyLib;
-using System.Reflection.Emit;
-using System.Collections.Generic;
-using System.Reflection;
 
 public static class MipmapExtend
 {

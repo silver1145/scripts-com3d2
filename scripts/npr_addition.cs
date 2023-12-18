@@ -13,7 +13,8 @@ using System.Reflection.Emit;
 using Newtonsoft.Json.Linq;
 using COM3D2.NPRShader.Plugin;
 
-public static class NPRShaderAdd {
+public static class NPRShaderAdd
+{
     static Harmony instance;
     public static string[] _BASEFRPROP;
     public static string[] _BASECOLORPROP;

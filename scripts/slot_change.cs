@@ -4,7 +4,6 @@
 
 using UnityEngine;
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
 
 public static class SlotChange {
