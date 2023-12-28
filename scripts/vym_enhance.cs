@@ -9,7 +9,6 @@ using System;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
-using System.Reflection;
 using CM3D2.VibeYourMaid.Plugin;
 
 public static class VYM_Enhance

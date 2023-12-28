@@ -6,9 +6,6 @@ using UnityEngine;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Security;
-using System.Security.Permissions;
 
 public static class ChangeTexFix
 {
