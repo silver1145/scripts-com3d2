@@ -18,6 +18,7 @@ Some COM3D2 functional scripts
 | npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                    |
 | vym_enhance                    | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                 |
 | mipmap_extend                  | Enable Mipmap for textures with `mipmap` in name | -                                                          |
+| mate_tex_cache                 | Mate & Tex Cache                                 | COM3D2.NPRShader.Plugin.dll(v930)                          |
 
 ## Install
 
@@ -88,3 +89,31 @@ Add Shader to `COM3D2.NPRShader.Plugin`.
 ### mipmap_extend
 
 All texture with `mipmap` in the name will enable Mipmap.
+
+### mate_tex_cache
+
+Cache textures and materials for COM3D2 and NPRShader.
+
+Configuration `BepinEx/config/MateTexCache.cfg`:
+
+1. GolbalEnable: Global Switch
+2. TempCacheCapacity: The size of the resource cache pool to be destroyed
+3. MateCacheType:
+    * All: Cache all `*.mate`
+    * NPR_Only: Only cache `*NPR*.mate`
+    * None: No cache
+4. TexCacheType:
+    * All: Cache all `*.tex`
+    * ByMate: cache based on MateCacheType and material
+
+For Mate:
+
+* You can optionally add Float Value `_Cache=0` or `_Cache=1` in Mate to mark whether the material needs to be cached.
+
+Priority (from high to low):
+
+ 1. Global Switch
+ 2. _Cache value in Mate
+ 3. MateCacheType & TexCacheType
+
+If `COM3D2.MaidLoader` is installed, the refresh function of MaidLoader will mark all caches as expired. When loading expired caches, it will be decided whether to reload based on the file hash.
