@@ -112,7 +112,7 @@ public static class MovieTextureReset {
 
     public static void GetMethod()
     {
-        Type t = Type.GetType("COM3D2.MovieTexture.MovieTextureManager, COM3D2.MovieTexture");
+        Type t = AccessTools.TypeByName("COM3D2.MovieTexture.Plugin.MovieTextureManager");
         if (t != null)
         {
             resetMethod = t.GetMethod("ResetMovie");
@@ -156,7 +156,7 @@ public static class SceneCapturePatch {
         try
         {
             instance = new Harmony("SceneCapturePatch");
-            Type typeItemAnimation = Type.GetType("CM3D2.SceneCapture.Plugin.ItemAnimation, COM3D2.SceneCapture.Plugin");
+            Type typeItemAnimation = AccessTools.TypeByName("CM3D2.SceneCapture.Plugin.ItemAnimation");
             var mOriginal = AccessTools.Method(typeItemAnimation, "AnimationPlay");
             MethodInfo mPostfix = typeof(SceneCapturePatch).GetMethod("AnimationPlayPostfix");
             instance.Patch(mOriginal, postfix: new HarmonyMethod(mPostfix));
