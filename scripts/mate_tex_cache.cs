@@ -597,7 +597,7 @@ public static class MateTexCache
     public static Material LoadMaterial(string f_strFileName, TBodySkin bodyskin, Material existmat = null)
     {
         byte[] array;       // or ImportCM.m_matTempFile for `ImportCM.LoadMaterial`
-+       bool isNPR = True   // False for `ImportCM.LoadMaterial`
++       bool isNPR = True;  // False for `ImportCM.LoadMaterial`
         try
         {
             using (AFileBase afileBase = ...)
@@ -830,7 +830,7 @@ public static class MateTexCache
 +       Texture2D tex = MateTexCache.GetTexture2D(f_strFileName);
 +       if (tex != null)
 +       {
-+           return tex    
++           return tex;
 +       }
 		tex = ImportCM.LoadTexture(GameUty.FileSystem, f_strFileName, true).CreateTexture2D();
 +       tex = MateTexCache.AddTexture2D(tex, f_strFileName);
