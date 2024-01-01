@@ -114,8 +114,8 @@ For Mate:
 Priority (from high to low):
 
  1. Global Switch
- 2. IgnoreSkin
- 3. _Cache value in Mate
+ 2. _Cache value in Mate
+ 3. IgnoreSkin
  4. MateCacheType & TexCacheType
 
 If `COM3D2.MaidLoader` is installed, the refresh function of MaidLoader will mark all caches as expired. When loading expired caches, it will be decided whether to reload based on the file hash.
