@@ -26,10 +26,12 @@ public static class MateTexCache
     // config
     static public ConfigFile configFile = new ConfigFile(Path.Combine(BepInEx.Paths.ConfigPath, "MateTexCache.cfg"), false);
     static public ConfigEntry<bool> _golbalEnable = configFile.Bind("MateTexCache Setting", "GolbalEnable", true, "Global Switch");
+    static public ConfigEntry<bool> _ignoreSkin = configFile.Bind("MateTexCache Setting", "IgnoreSkin", true, "Ignore Skin");
     static public ConfigEntry<int> _tempCacheCapacity = configFile.Bind("MateTexCache Setting", "TempCacheCapacity", 10, new ConfigDescription("Capacity for Temp Cache (will Destroy)", new AcceptableValueRange<int>(0, 100)));
     static public ConfigEntry<string> _mateCacheType = configFile.Bind("MateTexCache Setting", "MateCacheType", "NPR_Only", new ConfigDescription("MateCache Type", new AcceptableValueList<string>(MateCacheTypes.ToArray())));
     static public ConfigEntry<string> _texCacheType = configFile.Bind("MateTexCache Setting", "TexCacheType", "ByMate", new ConfigDescription("TexCache Type", new AcceptableValueList<string>(TexCacheTypes.ToArray())));
     static bool golbalEnable = _golbalEnable.Value;
+    static bool ignoreSkin = _ignoreSkin.Value;
     static int tempCacheCapacity = _tempCacheCapacity.Value;
     static int mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
     static int texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
@@ -539,6 +541,7 @@ public static class MateTexCache
         texCache = new UObjectCache<Texture2D>(GetFileContent);
         texTempManage = new Dictionary<BinaryReader, List<Texture2D>>();
         _golbalEnable.SettingChanged += (s, e) => golbalEnable = _golbalEnable.Value;
+        _ignoreSkin.SettingChanged += (s, e) => ignoreSkin = _ignoreSkin.Value;
         _tempCacheCapacity.SettingChanged += (s, e) => tempCacheCapacity = _tempCacheCapacity.Value;
         _mateCacheType.SettingChanged += (s, e) => mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
         _texCacheType.SettingChanged += (s, e) => texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
@@ -600,7 +603,7 @@ public static class MateTexCache
         }
         BinaryReader binaryReader = ...;
         ...
-+       Material material = MateTexCache.GetMaterial(f_strFileName, binaryReader, array, fileSize, isNPR);
++       Material material = MateTexCache.GetMaterial(f_strFileName, bodyskin, binaryReader, array, fileSize, isNPR);
 +       if (material != null)
 +       {
 +           if (bodyskin != null)
@@ -611,7 +614,7 @@ public static class MateTexCache
 +       else
 +       {
             material = NPRShader.ReadMaterial(binaryReader, f_strFileName, bodyskin, existmat);
-+           material = MateTexCache.AddMaterial(material, f_strFileName, binaryReader, array, fileSize, isNPR);
++           material = MateTexCache.AddMaterial(material, f_strFileName, bodyskin, binaryReader, array, fileSize, isNPR);
 +       }
         binaryReader.Close();
         return material;
@@ -634,6 +637,7 @@ public static class MateTexCache
         var setMaterialCI = codeMatcher.InstructionAt(9);
         var loadMaterialCI = codeMatcher.InstructionAt(12);
         codeMatcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_1))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc, fileSize))
@@ -656,6 +660,7 @@ public static class MateTexCache
             .MatchForward(false, new[] { new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(NPRShader), "ReadMaterial")) })
             .Advance(1)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_1))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, fileSize))
@@ -684,6 +689,7 @@ public static class MateTexCache
             .MatchBack(false, new[] { new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(BinaryReader), "ReadString")) })
             .Advance(2)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_3))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(ImportCM), "m_matTempFile")))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc, fileSize))
@@ -697,6 +703,7 @@ public static class MateTexCache
             .MatchForward(false, new[] { new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(ImportCM), "ReadMaterial")) })
             .Advance(1)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_3))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(ImportCM), "m_matTempFile")))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, fileSize))
@@ -902,10 +909,12 @@ public static class MateTexCache
         return ReplaceDestroy(instructions);
     }
 
-    public static Material GetMaterial(string f_strFileName, BinaryReader r, byte[] untruncatedData, int size, bool isNPR = false)
+    public static Material GetMaterial(string f_strFileName, TBodySkin bodyskin, BinaryReader r, byte[] untruncatedData, int size, bool isNPR = false)
     {
         bool flag = mateCacheType == MateCacheType_All;
         flag |= mateCacheType == MateCacheType_NPR_Only && isNPR;
+        string category = bodyskin.Category.ToLower();
+        flag &= !(ignoreSkin && (category == "head" || category == "body"));
         if (untruncatedData.Length > size)
         {
             untruncatedData = untruncatedData.Take(size).ToArray();
@@ -954,10 +963,12 @@ public static class MateTexCache
         return null;
     }
 
-    public static Material AddMaterial(Material mat, string f_strFileName, BinaryReader r, byte[] untruncatedData, int size, bool isNPR = false)
+    public static Material AddMaterial(Material mat, string f_strFileName, TBodySkin bodyskin, BinaryReader r, byte[] untruncatedData, int size, bool isNPR = false)
     {
         bool flag = mateCacheType == MateCacheType_All;
         flag |= mateCacheType == MateCacheType_NPR_Only && isNPR;
+        string category = bodyskin.Category.ToLower();
+        flag &= !(ignoreSkin && (category == "head" || category == "body"));
         flag &= mat != null;
         if (untruncatedData.Length > size)
         {

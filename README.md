@@ -97,12 +97,13 @@ Cache textures and materials for COM3D2 and NPRShader.
 Configuration `BepinEx/config/MateTexCache.cfg`:
 
 1. GolbalEnable: Global Switch
-2. TempCacheCapacity: The size of the resource cache pool to be destroyed
-3. MateCacheType:
+2. IgnoreSkin: Not cache Materials and Textures on body/head
+3. TempCacheCapacity: The size of the resource cache pool to be destroyed
+4. MateCacheType:
     * All: Cache all `*.mate`
     * NPR_Only: Only cache `*NPR*.mate`
     * None: No cache
-4. TexCacheType:
+5. TexCacheType:
     * All: Cache all `*.tex`
     * ByMate: cache based on MateCacheType and material
 
@@ -113,7 +114,8 @@ For Mate:
 Priority (from high to low):
 
  1. Global Switch
- 2. _Cache value in Mate
- 3. MateCacheType & TexCacheType
+ 2. IgnoreSkin
+ 3. _Cache value in Mate
+ 4. MateCacheType & TexCacheType
 
 If `COM3D2.MaidLoader` is installed, the refresh function of MaidLoader will mark all caches as expired. When loading expired caches, it will be decided whether to reload based on the file hash.
