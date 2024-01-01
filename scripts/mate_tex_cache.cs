@@ -888,6 +888,20 @@ public static class MateTexCache
         return ReplaceDestroy(instructions);
     }
 
+    [HarmonyPatch(typeof(TBody.TexLay), "Remove")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> TexLayRemoveTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        return ReplaceDestroy(instructions);
+    }
+
+    [HarmonyPatch(typeof(TBody.TexLay.LaySet), "Remove")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> TexLayLaySetRemoveTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        return ReplaceDestroy(instructions);
+    }
+
     public static Material GetMaterial(string f_strFileName, BinaryReader r, byte[] untruncatedData, int size, bool isNPR = false)
     {
         bool flag = mateCacheType == MateCacheType_All;
