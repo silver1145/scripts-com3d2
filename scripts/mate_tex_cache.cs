@@ -888,14 +888,14 @@ public static class MateTexCache
         return ReplaceDestroy(instructions);
     }
 
-    [HarmonyPatch(typeof(TBody.TexLay), "Remove")]
+    [HarmonyPatch(typeof(TBody.TexLay.LaySet), "Remove")]
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> TexLayRemoveTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         return ReplaceDestroy(instructions);
     }
 
-    [HarmonyPatch(typeof(TBody.TexLay.LaySet), "Remove")]
+    [HarmonyPatch(typeof(TBody.TexLay.OrderTex), "Remove")]
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> TexLayLaySetRemoveTranspiler(IEnumerable<CodeInstruction> instructions)
     {
