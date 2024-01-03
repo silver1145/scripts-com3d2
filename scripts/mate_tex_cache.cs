@@ -926,7 +926,7 @@ public static class MateTexCache
     {
         bool flag = mateCacheType == MateCacheType_All;
         flag |= mateCacheType == MateCacheType_NPR_Only && isNPR;
-        string category = bodyskin.Category.ToLower();
+        string category = bodyskin?.Category.ToLower();
         flag &= !(ignoreSkin && (category == "head" || category == "body"));
         if (untruncatedData.Length > size)
         {
@@ -980,7 +980,7 @@ public static class MateTexCache
     {
         bool flag = mateCacheType == MateCacheType_All;
         flag |= mateCacheType == MateCacheType_NPR_Only && isNPR;
-        string category = bodyskin.Category.ToLower();
+        string category = bodyskin?.Category.ToLower();
         flag &= !(ignoreSkin && (category == "head" || category == "body"));
         flag &= mat != null;
         if (untruncatedData.Length > size)
