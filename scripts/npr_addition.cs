@@ -565,9 +565,9 @@ public static class NPRShaderAdd
         {
             this.harmony = harmony;
             this.failLimit = failLimit;
+            tryPatches.Add(this);
             DoPatch();
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
-            tryPatches.Add(this);
         }
 
         void DoPatch()

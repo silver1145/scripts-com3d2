@@ -22,6 +22,8 @@ public static class DCMSyncAnm
         anmStates = new HashSet<AnimationState>();
         anmStatesToClean = new HashSet<AnimationState>();
         instance = Harmony.CreateAndPatchAll(typeof(DCMSyncAnm));
+        new TryPatchMovieTexture(instance);
+        new TryPatchSceneCapture(instance);
     }
 
     public static void Unload()
@@ -90,105 +92,108 @@ public static class DCMSyncAnm
         if (__instance.isFreeDance)
         {
             ResetAnm();
-            MovieTextureReset.Reset();
-        }
-    }
-}
-
-public static class MovieTextureReset {
-    static MethodInfo resetMethod;
-    static bool hasGet = false;
-
-    public static void Main()
-    {
-        GetMethod();
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
-    }
-
-    public static void Unload()
-    {
-        resetMethod = null;
-    }
-
-    public static void GetMethod()
-    {
-        Type t = AccessTools.TypeByName("COM3D2.MovieTexture.Plugin.MovieTextureManager");
-        if (t != null)
-        {
-            resetMethod = t.GetMethod("ResetMovie");
-            hasGet = true;
+            TryPatchMovieTexture.Reset();
         }
     }
 
-    private static void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+    abstract class TryPatch
     {
-        if (!hasGet)
+        public static List<TryPatch> tryPatches = new List<TryPatch>();
+        private bool patched = false;
+        private int failCount = 0;
+        private int failLimit;
+        public Harmony harmony;
+
+        public TryPatch(Harmony harmony, int failLimit = 3)
         {
-            hasGet = true;
-            GetMethod();
+            this.harmony = harmony;
+            this.failLimit = failLimit;
+            tryPatches.Add(this);
+            DoPatch();
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
+        }
+
+        void DoPatch()
+        {
+            try
+            {
+                patched = Patch();
+            }
+            finally
+            {
+                if (patched || (failLimit > 0 && ++failCount >= failLimit))
+                {
+                    RemovePatch();
+                }
+            }
+        }
+
+        void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+        {
+            if (!patched)
+            {
+                DoPatch();
+            }
+        }
+
+        void RemovePatch()
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneLoaded;
+            tryPatches.Remove(this);
+        }
+
+        public abstract bool Patch();
+    }
+
+    class TryPatchMovieTexture : TryPatch
+    {
+        static MethodInfo resetMethod;
+        public TryPatchMovieTexture(Harmony harmony, int failLimit = 3) : base(harmony, failLimit) {}
+
+        public override bool Patch()
+        {
+            Type t = AccessTools.TypeByName("COM3D2.MovieTexture.Plugin.MovieTextureManager");
+            if (t != null)
+            {
+                resetMethod = t.GetMethod("ResetMovie");
+                return true;
+            }
+            return false;
+        }
+
+        public static void Reset()
+        {
+            resetMethod?.Invoke(null, null);
         }
     }
 
-    public static void Reset()
+    class TryPatchSceneCapture : TryPatch
     {
-        resetMethod?.Invoke(null, null);
-    }
-}
+        public TryPatchSceneCapture(Harmony harmony, int failLimit = 3) : base(harmony, failLimit) {}
 
-public static class SceneCapturePatch {
-    static Harmony instance;
-    static bool patched = false;
-
-    public static void Main()
-    {
-        DoPatch();
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
-    }
-
-    public static void Unload()
-    {
-        instance.UnpatchAll(instance.Id);
-        instance = null;
-    }
-
-    public static void DoPatch()
-    {
-        try
+        public override bool Patch()
         {
-            instance = new Harmony("SceneCapturePatch");
             Type typeItemAnimation = AccessTools.TypeByName("CM3D2.SceneCapture.Plugin.ItemAnimation");
             var mOriginal = AccessTools.Method(typeItemAnimation, "AnimationPlay");
-            MethodInfo mPostfix = typeof(SceneCapturePatch).GetMethod("AnimationPlayPostfix");
-            instance.Patch(mOriginal, postfix: new HarmonyMethod(mPostfix));
-            patched = true;
+            MethodInfo mPostfix = AccessTools.Method(typeof(TryPatchSceneCapture), nameof(AnimationPlayPostfix));
+            harmony.Patch(mOriginal, postfix: new HarmonyMethod(mPostfix));
+            return true;
         }
-        finally
-        {
-        }
-    }
 
-    private static void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
-    {
-        if (!patched)
+        public static void AnimationPlayPostfix(ref object __instance, string f_strAnimName, ref bool __result)
         {
-            patched = true;
-            DoPatch();
-        }
-    }
-
-    public static void AnimationPlayPostfix(ref object __instance, string f_strAnimName, ref bool __result)
-    {
-        if (__result)
-        {
-            DCMSyncAnm.CleanAnm();
-            Type objectType = __instance.GetType();
-            FieldInfo fieldInfo = objectType.GetField("m_animItem", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (fieldInfo != null)
+            if (__result)
             {
-                Animation animItemValue = (Animation)fieldInfo.GetValue(__instance);
-                DCMSyncAnm.anmStates.Add(animItemValue[f_strAnimName]);
+                CleanAnm();
+                Type objectType = __instance.GetType();
+                FieldInfo fieldInfo = objectType.GetField("m_animItem", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (fieldInfo != null)
+                {
+                    Animation animItemValue = (Animation)fieldInfo.GetValue(__instance);
+                    anmStates.Add(animItemValue[f_strAnimName]);
+                }
+                
             }
-            
         }
     }
 }

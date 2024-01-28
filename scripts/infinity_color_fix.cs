@@ -22,6 +22,7 @@ public static class InfinityColorFix
     public static void Main()
     {
         instance = Harmony.CreateAndPatchAll(typeof(InfinityColorFix));
+        new TryPatchMaidLoader(instance);
         if (LoadAssetBundle())
         {
             LoadMaskTex();
@@ -207,51 +208,71 @@ public static class InfinityColorFix
             }
         }
     }
-}
 
-public static class MaidLoaderRefresh {
-    static Harmony instance;
-    static bool patched = false;
-
-    public static void Main()
+    abstract class TryPatch
     {
-        DoPatch();
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
-    }
+        public static List<TryPatch> tryPatches = new List<TryPatch>();
+        private bool patched = false;
+        private int failCount = 0;
+        private int failLimit;
+        public Harmony harmony;
 
-    public static void Unload()
-    {
-        instance.UnpatchAll(instance.Id);
-        instance = null;
-    }
-
-    public static void DoPatch()
-    {
-        try
+        public TryPatch(Harmony harmony, int failLimit = 3)
         {
-            instance = new Harmony("MaidLoaderRefresh");
-            var mOriginal = AccessTools.Method(Type.GetType("COM3D2.MaidLoader.RefreshMod, COM3D2.MaidLoader"), "RefreshCo");
-            var mPrefix = SymbolExtensions.GetMethodInfo(() => RefreshCoPrefix());
-            instance.Patch(mOriginal, new HarmonyMethod(mPrefix));
-            patched = true;
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneLoaded;
-        }
-        finally
-        {
-        }
-    }
-
-    private static void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
-    {
-        if (!patched)
-        {
-            patched = true;
+            this.harmony = harmony;
+            this.failLimit = failLimit;
+            tryPatches.Add(this);
             DoPatch();
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
         }
+
+        void DoPatch()
+        {
+            try
+            {
+                patched = Patch();
+            }
+            finally
+            {
+                if (patched || (failLimit > 0 && ++failCount >= failLimit))
+                {
+                    RemovePatch();
+                }
+            }
+        }
+
+        void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+        {
+            if (!patched)
+            {
+                DoPatch();
+            }
+        }
+
+        void RemovePatch()
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneLoaded;
+            tryPatches.Remove(this);
+        }
+
+        public abstract bool Patch();
     }
 
-    public static void RefreshCoPrefix()
+    class TryPatchMaidLoader : TryPatch
     {
-        InfinityColorFix.LoadMaskTex(true);
+        public TryPatchMaidLoader(Harmony harmony, int failLimit = 3) : base(harmony, failLimit) {}
+
+        public override bool Patch()
+        {
+            var mOriginal = AccessTools.Method(AccessTools.TypeByName("COM3D2.MaidLoader.RefreshMod"), "RefreshCo");
+            var mPrefix = SymbolExtensions.GetMethodInfo(() => RefreshCoPrefix());
+            harmony.Patch(mOriginal, prefix: new HarmonyMethod(mPrefix));
+            return true;
+        }
+
+        public static void RefreshCoPrefix()
+        {
+            LoadMaskTex(true);
+        }
     }
 }

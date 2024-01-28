@@ -36,8 +36,6 @@ public static class MateTexCache
     static int tempCacheCapacity = _tempCacheCapacity.Value;
     static int mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
     static int texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
-    // try patch MaidLoader flag
-    static bool patched = false;
     // cache
     static public UObjectCache<Material> mateCache;
     static public UObjectCache<Texture2D> texCache;
@@ -529,8 +527,7 @@ public static class MateTexCache
     {
         Init();
         instance = Harmony.CreateAndPatchAll(typeof(MateTexCache));
-        TryPatch();
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
+        new TryPatchMaidLoader(instance);
     }
 
     public static void Unload()
@@ -560,30 +557,6 @@ public static class MateTexCache
         mateCache = null;
         texCache = null;
         texTempManage = null;
-    }
-
-    public static void TryPatch()
-    {
-        try
-        {
-            var mOriginal = AccessTools.Method(Type.GetType("COM3D2.MaidLoader.RefreshMod, COM3D2.MaidLoader"), "RefreshCo");
-            var mPrefix = SymbolExtensions.GetMethodInfo(() => RefreshCoPrefix());
-            instance.Patch(mOriginal, new HarmonyMethod(mPrefix));
-            patched = true;
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneLoaded;
-        }
-        finally
-        {
-        }
-    }
-
-    private static void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
-    {
-        if (!patched)
-        {
-            patched = true;
-            TryPatch();
-        }
     }
 
     public static void RefreshCoPrefix()
@@ -967,7 +940,7 @@ public static class MateTexCache
                 {
                     data = f.ReadAll();
                 }
-                if (texCache.TryGetValue(f_strFileName.ToLower(), out Texture2D tex))
+                if (texCache.TryGetValue(f_strFileName.ToLower(), out Texture2D tex, data))
                 {
                     return tex;
                 }
@@ -1128,6 +1101,67 @@ public static class MateTexCache
         }
     }
 
+    abstract class TryPatch
+    {
+        public static List<TryPatch> tryPatches = new List<TryPatch>();
+        private bool patched = false;
+        private int failCount = 0;
+        private int failLimit;
+        public Harmony harmony;
+
+        public TryPatch(Harmony harmony, int failLimit = 3)
+        {
+            this.harmony = harmony;
+            this.failLimit = failLimit;
+            tryPatches.Add(this);
+            DoPatch();
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneLoaded;
+        }
+
+        void DoPatch()
+        {
+            try
+            {
+                patched = Patch();
+            }
+            finally
+            {
+                if (patched || (failLimit > 0 && ++failCount >= failLimit))
+                {
+                    RemovePatch();
+                }
+            }
+        }
+
+        void SceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+        {
+            if (!patched)
+            {
+                DoPatch();
+            }
+        }
+
+        void RemovePatch()
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneLoaded;
+            tryPatches.Remove(this);
+        }
+
+        public abstract bool Patch();
+    }
+
+    class TryPatchMaidLoader : TryPatch
+    {
+        public TryPatchMaidLoader(Harmony harmony, int failLimit = 3) : base(harmony, failLimit) {}
+
+        public override bool Patch()
+        {
+            var mOriginal = AccessTools.Method(AccessTools.TypeByName("COM3D2.MaidLoader.RefreshMod"), "RefreshCo");
+            var mPrefix = SymbolExtensions.GetMethodInfo(() => RefreshCoPrefix());
+            harmony.Patch(mOriginal, prefix: new HarmonyMethod(mPrefix));
+            return true;
+        }
+    }
 }
 
 #if MATETEXCACHE_DEBUG
