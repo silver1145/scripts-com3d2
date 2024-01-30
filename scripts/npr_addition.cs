@@ -319,6 +319,41 @@ public static class NPRShaderAdd
             .InstructionEnumeration();
     }
 
+    [HarmonyPatch(typeof(ObjectPane), "getMaterial")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> ObjectGetMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj));
+        var newObj = codeMatcher.Instruction;
+        codeMatcher.RemoveInstruction()
+            .MatchForward(false, new CodeMatch(OpCodes.Ldarg_0))
+            .RemoveInstructionsWithOffsets(0, 2)
+            .MatchForward(false, new CodeMatch(OpCodes.Ldfld))
+            .MatchForward(false, new CodeMatch(OpCodes.Ldelem_Ref))
+            .Advance(1)
+            .Insert(newObj);
+        return codeMatcher.InstructionEnumeration();
+    }
+
+    [HarmonyPatch(typeof(ObjectPane), "setMaterial")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> ObjectSetMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj)).RemoveInstruction();
+        return codeMatcher.InstructionEnumeration();
+    }
+
+    [HarmonyPatch(typeof(ObjectPane), "resetMaterial")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> ObjectResetMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj)).RemoveInstruction();
+        return codeMatcher.InstructionEnumeration();
+    }
+
     public class CubemapConverter
     {
         public static Cubemap ByTexture2D(Texture2D tempTex)
