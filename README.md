@@ -10,7 +10,6 @@ Some COM3D2 functional scripts
 | dcm_sync_anm                   | DCM Sync With Item Anm and MovieTexture          | COM3D2.DanceCameraMotion.Plugin                            |
 | extract_ks_scripts             | Extract *.ks scripts from game                   | -                                                          |
 | infinity_color_fix             | Fix InfinityColor on Alpha Channel and Add Mask  | -                                                          |
-| npr_930_dpi_fix                | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin.dll(v930)                          |
 | partsedit_add_bone             | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                    |
 | vym_syasei_sync_with_inoutanim | Vym Syasei Sync With Inoutanim                   | COM3D2.VibeYourMaid.Plugin<br>COM3D2.InOutAnimation.Plugin |
 | wrap_mode_extend_sc            | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                 |
@@ -18,7 +17,8 @@ Some COM3D2 functional scripts
 | npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                    |
 | vym_enhance                    | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                 |
 | mipmap_extend                  | Enable Mipmap for textures with `mipmap` in name | -                                                          |
-| mate_tex_cache                 | Mate & Tex Cache                                 | COM3D2.NPRShader.Plugin.dll(v930)                          |
+| mate_tex_cache                 | Mate & Tex Cache                                 | COM3D2.NPRShader.Plugin                                    |
+| ~~npr_930_dpi_fix~~            | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin(v930)                              |
 
 ## Install
 
@@ -52,10 +52,6 @@ Only need to create {name}.infinity_mask.tex for the texture {name}.tex that nee
 The grayscale [0-1] in the Mask texture determines whether the infinity color is displayed, 0 means that the original texture is not affected by the infinity color, and 1 means that the infinity color texture is displayed. The grayscale is allowed to be an intermediate value for mixing.
 
 If `COM3D2.MaidLoader` is installed, the infinity color Mask texture will also be refreshed when the Mod Refresh button is clicked.
-
-### npr_930_dpi_fix
-
-DPI Fix on 2K for NPRShader v930.
 
 ### partsedit_add_bone
 
@@ -119,3 +115,8 @@ Priority (from high to low):
  4. MateCacheType & TexCacheType
 
 If `COM3D2.MaidLoader` is installed, the refresh function of MaidLoader will mark all caches as expired. When loading expired caches, it will be decided whether to reload based on the file hash.
+
+### ~~npr_930_dpi_fix~~
+
+**Deprecated**
+DPI Fix on 2K for NPRShader v930.
