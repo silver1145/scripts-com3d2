@@ -15,6 +15,7 @@ using BepInEx.Configuration;
 public static class MateTexCache
 {
     static public Harmony instance;
+    static bool patched = false;
     // consts
     readonly static List<string> MateCacheTypes = new List<string> { "None", "NPR_Only", "All" };
     readonly static List<string> TexCacheTypes = new List<string> { "ByMate", "All" };
@@ -524,9 +525,15 @@ public static class MateTexCache
     public static void Main()
     {
         Init();
-        instance = Harmony.CreateAndPatchAll(typeof(MateTexCache));
-        new TryPatchMaidLoader(instance);
-        new TryPatchNPRShader(instance);
+        // Patch later than Shader Loader
+        if (GameMain.Instance.GetNowSceneName() == null)
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += PatchWhenSceneLoaded;
+        }
+        else
+        {
+            DoPatch();
+        }
     }
 
     public static void Unload()
@@ -534,6 +541,24 @@ public static class MateTexCache
         instance.UnpatchAll(instance.Id);
         instance = null;
         UnInit();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= PatchWhenSceneLoaded;
+    }
+
+    public static void DoPatch()
+    {
+        patched = true;
+        instance = Harmony.CreateAndPatchAll(typeof(MateTexCache));
+        new TryPatchMaidLoader(instance);
+        new TryPatchNPRShader(instance);
+    }
+
+    public static void PatchWhenSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+    {
+        if (!patched)
+        {
+            DoPatch();
+        }
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= PatchWhenSceneLoaded;
     }
 
     public static void Init()
@@ -580,8 +605,9 @@ public static class MateTexCache
         }
         BinaryReader binaryReader = ...;
         ...
+        ShaderServant.ForceNprCompatibility(ref binaryReader, f_strFileName);  // May
 +       Material material = MateTexCache.GetMaterial(f_strFileName, bodyskin, binaryReader, ImportCM.m_matTempFile, fileSize, isNPR);
-+       if (material != null)
++       if (material != null)  // Only for `NPRShader.LoadMaterial`, Process in Postfix for `ImportCM.LoadMaterial`
 +       {
 +           if (bodyskin != null)
 +           {
@@ -608,8 +634,8 @@ public static class MateTexCache
             .MatchBack(false, new[] { new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(BinaryReader), "Close")) })
             .Advance(-1)
             .CreateLabel(out matLabel)
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(BinaryReader), "ReadString")) })
-            .Advance(2)
+            .MatchBack(false, new[] { new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(ImportCM), "ReadMaterial")) })
+            .Advance(-3)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_3))
