@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using BepInEx.Configuration;
-using COM3D2.NPRShader.Plugin;
-using COM3D2.NPRShader.Managed;
 
 public static class MateTexCache
 {
@@ -29,8 +27,8 @@ public static class MateTexCache
     static public ConfigEntry<bool> _golbalEnable = configFile.Bind("MateTexCache Setting", "GolbalEnable", true, "Global Switch");
     static public ConfigEntry<bool> _ignoreSkin = configFile.Bind("MateTexCache Setting", "IgnoreSkin", true, "Ignore Skin");
     static public ConfigEntry<int> _tempCacheCapacity = configFile.Bind("MateTexCache Setting", "TempCacheCapacity", 10, new ConfigDescription("Capacity for Temp Cache (will Destroy)", new AcceptableValueRange<int>(0, 100)));
-    static public ConfigEntry<string> _mateCacheType = configFile.Bind("MateTexCache Setting", "MateCacheType", "NPR_Only", new ConfigDescription("MateCache Type", new AcceptableValueList<string>(MateCacheTypes.ToArray())));
-    static public ConfigEntry<string> _texCacheType = configFile.Bind("MateTexCache Setting", "TexCacheType", "ByMate", new ConfigDescription("TexCache Type", new AcceptableValueList<string>(TexCacheTypes.ToArray())));
+    static public ConfigEntry<string> _mateCacheType = configFile.Bind("MateTexCache Setting", "MateCacheType", "All", new ConfigDescription("MateCache Type", new AcceptableValueList<string>(MateCacheTypes.ToArray())));
+    static public ConfigEntry<string> _texCacheType = configFile.Bind("MateTexCache Setting", "TexCacheType", "All", new ConfigDescription("TexCache Type", new AcceptableValueList<string>(TexCacheTypes.ToArray())));
     static bool golbalEnable = _golbalEnable.Value;
     static bool ignoreSkin = _ignoreSkin.Value;
     static int tempCacheCapacity = _tempCacheCapacity.Value;
@@ -528,6 +526,7 @@ public static class MateTexCache
         Init();
         instance = Harmony.CreateAndPatchAll(typeof(MateTexCache));
         new TryPatchMaidLoader(instance);
+        new TryPatchNPRShader(instance);
     }
 
     public static void Unload()
@@ -565,11 +564,11 @@ public static class MateTexCache
         texCache.SetAllDirt();
     }
 
-    // `NPRShader.LoadMaterial` & `ImportCM.LoadMaterial`
+    // `ImportCM.LoadMaterial` & `NPRShader.LoadMaterial`
     /*
     public static Material LoadMaterial(string f_strFileName, TBodySkin bodyskin, Material existmat = null)
     {
-        byte[] array;       // or ImportCM.m_matTempFile for `ImportCM.LoadMaterial`
+        byte[] *; // `ImportCM.m_matTempFile` for `ImportCM.LoadMaterial` or `byte[] array;` for `NPRShader.LoadMaterial`
 +       bool isNPR = True;  // False for `ImportCM.LoadMaterial`
         try
         {
@@ -581,7 +580,7 @@ public static class MateTexCache
         }
         BinaryReader binaryReader = ...;
         ...
-+       Material material = MateTexCache.GetMaterial(f_strFileName, bodyskin, binaryReader, array, fileSize, isNPR);
++       Material material = MateTexCache.GetMaterial(f_strFileName, bodyskin, binaryReader, ImportCM.m_matTempFile, fileSize, isNPR);
 +       if (material != null)
 +       {
 +           if (bodyskin != null)
@@ -591,68 +590,13 @@ public static class MateTexCache
 +       }
 +       else
 +       {
-            material = NPRShader.ReadMaterial(binaryReader, f_strFileName, bodyskin, existmat);
-+           material = MateTexCache.AddMaterial(material, f_strFileName, bodyskin, binaryReader, array, fileSize, isNPR);
+            material = ImportCM.ReadMaterial(binaryReader, f_strFileName, bodyskin, existmat);
++           material = MateTexCache.AddMaterial(material, f_strFileName, bodyskin, binaryReader, ImportCM.m_matTempFile, fileSize, isNPR);
 +       }
         binaryReader.Close();
         return material;
     }
     */
-    [HarmonyPatch(typeof(NPRShader), "LoadMaterial")]
-    [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> NPRShaderLoadMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-    {
-        LocalBuilder fileSize = generator.DeclareLocal(typeof(int));
-        CodeMatcher codeMatcher = new CodeMatcher(instructions, generator);
-        Label matLabel;
-        Label jmpLabel;
-        codeMatcher.End()
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(BinaryReader), "Close")) })
-            .Advance(-1)
-            .CreateLabel(out matLabel)
-            .Advance(-1)
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Ldloc_1) });
-        var setMaterialCI = codeMatcher.InstructionAt(9);
-        var loadMaterialCI = codeMatcher.InstructionAt(12);
-        codeMatcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc, fileSize))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_I4_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MateTexCache), "GetMaterial")))
-            .InsertAndAdvance(setMaterialCI)
-            .InsertAndAdvance(loadMaterialCI)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldnull))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality")))
-            .Insert(new CodeInstruction(OpCodes.Brtrue_S, matLabel))
-            .CreateLabel(out jmpLabel)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Dup))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Brfalse_S, jmpLabel))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Brfalse_S, jmpLabel))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(TBodySkin), "listDEL")))
-            .InsertAndAdvance(loadMaterialCI)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(List<UnityEngine.Object>), "Add")))
-            .MatchForward(false, new[] { new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(NPRShader), "ReadMaterial")) })
-            .Advance(1)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, fileSize))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_I4_1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MateTexCache), "AddMaterial")));
-        codeMatcher.Start()
-            .MatchForward(false, new[] { new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(AFileBase), "Read")) })
-            .Advance(1)
-            .InsertAndAdvance(codeMatcher.InstructionAt(-3))
-            .InsertAndAdvance(codeMatcher.InstructionAt(-3))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Stloc_S, fileSize));
-        return codeMatcher.InstructionEnumeration();
-    }
-
     [HarmonyPatch(typeof(ImportCM), "LoadMaterial")]
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> ImportCMLoadMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
@@ -696,7 +640,7 @@ public static class MateTexCache
         return codeMatcher.InstructionEnumeration();
     }
 
-    // `NPRShader.ReadMaterial` & `ImportCM.ReadMaterial`
+    // `ImportCM.ReadMaterial` & `NPRShader.ReadMaterial`
     /*
     public static Material ReadMaterial(BinaryReader r, TBodySkin bodyskin = null, Material existmat = null)
     {
@@ -756,13 +700,6 @@ public static class MateTexCache
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_I4_0))
             .InsertAndAdvance(codeMatcher.InstructionAt(1));
         return codeMatcher.InstructionEnumeration();
-    }
-
-    [HarmonyPatch(typeof(NPRShader), "ReadMaterial")]
-    [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> NPRShaderReadMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-    {
-        return ReadMaterialTranspiler(instructions, generator);
     }
 
     [HarmonyPatch(typeof(ImportCM), "ReadMaterial")]
@@ -852,14 +789,6 @@ public static class MateTexCache
     public static IEnumerable<CodeInstruction> DeleteObjTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         return ReplaceDestroyImmediate(instructions);
-    }
-
-    // `NPRShaderManaged.ChangeNPRSMaterial`
-    [HarmonyPatch(typeof(NPRShaderManaged), "ChangeNPRSMaterial")]
-    [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> ChangeNPRSMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
-    {
-        return ReplaceDestroyImmediate(ReplaceDestroyImmediate(instructions));
     }
 
     /*
@@ -1148,6 +1077,93 @@ public static class MateTexCache
         }
 
         public abstract bool Patch();
+    }
+
+    class TryPatchNPRShader : TryPatch
+    {
+        public TryPatchNPRShader(Harmony harmony, int failLimit = 1) : base(harmony, failLimit) {}
+
+        public override bool Patch()
+        {
+            if (AccessTools.TypeByName("COM3D2.NPRShader.Plugin.NPRShader") == null)
+            {
+                return false;
+            }
+            var nprShaderLoadMaterial = AccessTools.Method(AccessTools.TypeByName("COM3D2.NPRShader.Plugin.NPRShader"), "LoadMaterial");
+            var nprShaderLoadMaterialTranspiler = AccessTools.Method(typeof(TryPatchNPRShader), "NPRShaderLoadMaterialTranspiler");
+            harmony.Patch(nprShaderLoadMaterial, transpiler: new HarmonyMethod(nprShaderLoadMaterialTranspiler));
+            var nprShaderReadMaterial = AccessTools.Method(AccessTools.TypeByName("COM3D2.NPRShader.Plugin.NPRShader"), "ReadMaterial");
+            var nprShaderReadMaterialTranspiler = AccessTools.Method(typeof(TryPatchNPRShader), "NPRShaderReadMaterialTranspiler");
+            harmony.Patch(nprShaderReadMaterial, transpiler: new HarmonyMethod(nprShaderReadMaterialTranspiler));
+            var changeNPRSMaterial = AccessTools.Method(AccessTools.TypeByName("COM3D2.NPRShader.Managed.NPRShaderManaged"), "ChangeNPRSMaterial");
+            var changeNPRSMaterialTranspiler = AccessTools.Method(typeof(TryPatchNPRShader), "ChangeNPRSMaterialTranspiler");
+            harmony.Patch(changeNPRSMaterial, transpiler: new HarmonyMethod(changeNPRSMaterialTranspiler));
+            return true;
+        }
+
+        public static IEnumerable<CodeInstruction> NPRShaderLoadMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            LocalBuilder fileSize = generator.DeclareLocal(typeof(int));
+            CodeMatcher codeMatcher = new CodeMatcher(instructions, generator);
+            Label matLabel;
+            Label jmpLabel;
+            codeMatcher.End()
+                .MatchBack(false, new[] { new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(BinaryReader), "Close")) })
+                .Advance(-1)
+                .CreateLabel(out matLabel)
+                .Advance(-1)
+                .MatchBack(false, new[] { new CodeMatch(OpCodes.Ldloc_1) });
+            var setMaterialCI = codeMatcher.InstructionAt(9);
+            var loadMaterialCI = codeMatcher.InstructionAt(12);
+            codeMatcher.InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc, fileSize))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_I4_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MateTexCache), "GetMaterial")))
+                .InsertAndAdvance(setMaterialCI)
+                .InsertAndAdvance(loadMaterialCI)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldnull))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality")))
+                .Insert(new CodeInstruction(OpCodes.Brtrue_S, matLabel))
+                .CreateLabel(out jmpLabel)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Dup))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Brfalse_S, jmpLabel))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Brfalse_S, jmpLabel))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(TBodySkin), "listDEL")))
+                .InsertAndAdvance(loadMaterialCI)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(List<UnityEngine.Object>), "Add")))
+                .MatchForward(false, new[] { new CodeMatch(OpCodes.Call, AccessTools.Method(AccessTools.TypeByName("COM3D2.NPRShader.Plugin.NPRShader"), "ReadMaterial")) })
+                .Advance(1)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, fileSize))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldc_I4_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MateTexCache), "AddMaterial")));
+            codeMatcher.Start()
+                .MatchForward(false, new[] { new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(AFileBase), "Read")) })
+                .Advance(1)
+                .InsertAndAdvance(codeMatcher.InstructionAt(-3))
+                .InsertAndAdvance(codeMatcher.InstructionAt(-3))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Stloc_S, fileSize));
+            return codeMatcher.InstructionEnumeration();
+        }
+
+        public static IEnumerable<CodeInstruction> NPRShaderReadMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            return ReadMaterialTranspiler(instructions, generator);
+        }
+
+        // `NPRShaderManaged.ChangeNPRSMaterial`
+        public static IEnumerable<CodeInstruction> ChangeNPRSMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return ReplaceDestroyImmediate(ReplaceDestroyImmediate(instructions));
+        }
     }
 
     class TryPatchMaidLoader : TryPatch
