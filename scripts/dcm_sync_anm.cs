@@ -14,13 +14,28 @@ public static class DCMSyncAnm
 {
     static Harmony instance;
     static KeyCode PLAY_KEYCODE = KeyCode.BackQuote;
-    static HashSet<AnimationState> anmStates;
-    static HashSet<AnimationState> anmStatesToClean;
+    static HashSet<AnimInfo> animInfos;
+    static HashSet<AnimInfo> animInfosToClean;
+    static float lastTime;
+
+    class AnimInfo
+    {
+        public string name;
+        public Animation anim;
+        public AnimationState state;
+
+        public AnimInfo(string name, Animation anim, AnimationState state)
+        {
+            this.name = name;
+            this.anim = anim;
+            this.state = state;
+        }
+    }
 
     public static void Main()
     {
-        anmStates = new HashSet<AnimationState>();
-        anmStatesToClean = new HashSet<AnimationState>();
+        animInfos = new HashSet<AnimInfo>();
+        animInfosToClean = new HashSet<AnimInfo>();
         instance = Harmony.CreateAndPatchAll(typeof(DCMSyncAnm));
         new TryPatchMovieTexture(instance);
         new TryPatchSceneCapture(instance);
@@ -30,36 +45,87 @@ public static class DCMSyncAnm
     {
         instance.UnpatchAll(instance.Id);
         instance = null;
-        anmStates.Clear();
-        anmStates = null;
-        anmStatesToClean.Clear();
-        anmStatesToClean = null;
+        animInfos.Clear();
+        animInfos = null;
+        animInfosToClean.Clear();
+        animInfosToClean = null;
     }
 
     public static void CleanAnm()
     {
-        foreach (var anms in anmStates)
+        foreach (var i in animInfos)
         {
-            if (anms == null)
+            if (i.state == null || i.anim == null)
             {
-                anmStatesToClean.Add(anms);
+                animInfosToClean.Add(i);
             }
         }
-        foreach (var anms in anmStatesToClean)
+        foreach (var i in animInfosToClean)
         {
-            anmStates.Remove(anms);
+            animInfos.Remove(i);
         }
-        anmStatesToClean.Clear();
+        animInfosToClean.Clear();
     }
 
     public static void ResetAnm()
     {
         CleanAnm();
-        foreach (var anms in anmStates)
+        foreach (var i in animInfos)
         {
-            if (anms != null)
+            var anim = i.anim;
+            var state = i.state;
+            if (state != null)
             {
-                anms.time = 0f;
+                state.time = 0f;
+                state.speed = 1f;
+                state.enabled = true;
+                anim.Play(i.name);
+            }
+        }
+    }
+
+    public static void SetAnmPlaying(bool isPlaying)
+    {
+        foreach (var i in animInfos)
+        {
+            var anim = i.anim;
+            var state = i.state;
+            if (state != null)
+            {
+                state.speed = 1f;
+                state.enabled = isPlaying;
+                if (!(state?.clip.isLooping ?? true) && isPlaying)
+                {
+                    if (state.time != 0f && state.time <= state.clip.length)
+                    {
+                        anim.Play(i.name);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void SeekAnm(float time, bool paused = true)
+    {
+        foreach (var i in animInfos)
+        {
+            var anim = i.anim;
+            var state = i.state;
+            if (state != null)
+            {
+                if (paused && !state.enabled)
+                {
+                    state.enabled = true;
+                    state.speed = 0f;
+                }
+                state.time = time;
+                if (!(state?.clip.isLooping ?? true))
+                {
+                    if (time <= state.clip.length)
+                    {
+                        anim.Play(i.name);
+                    }
+                }
             }
         }
     }
@@ -71,7 +137,7 @@ public static class DCMSyncAnm
         if (__result)
         {
             CleanAnm();
-            anmStates.Add(__instance.m_animItem[f_strAnimName]);
+            animInfos.Add(new AnimInfo(f_strAnimName, __instance.m_animItem, __instance.m_animItem[f_strAnimName]));
         }
     }
 
@@ -89,10 +155,30 @@ public static class DCMSyncAnm
     [HarmonyPostfix]
     public static void StartOrStopDancePostfix(ref DanceCameraMotion __instance)
     {
+        ResetAnm();
+        TryPatchMovieTexture.Reset();
+    }
+
+    [HarmonyPatch(typeof(DanceCameraMotion), "StopFreeDance")]
+    [HarmonyPostfix]
+    public static void StopFreeDancePostfix(ref DanceCameraMotion __instance, bool isFreeStoped)
+    {
         if (__instance.isFreeDance)
         {
-            ResetAnm();
-            TryPatchMovieTexture.Reset();
+            SetAnmPlaying(!isFreeStoped);
+            TryPatchMovieTexture.SetPlaying(!isFreeStoped);
+        }
+    }
+
+    [HarmonyPatch(typeof(DanceCameraMotion), "SetAnimationAndBgmTime")]
+    [HarmonyPostfix]
+    public static void SetFreeDanceAreaDanceTimePostfix(float bgmTime)
+    {
+        if (bgmTime != lastTime)
+        {
+            SeekAnm(bgmTime);
+            TryPatchMovieTexture.Seek(bgmTime);
+            lastTime = bgmTime;
         }
     }
 
@@ -148,6 +234,9 @@ public static class DCMSyncAnm
     class TryPatchMovieTexture : TryPatch
     {
         static MethodInfo resetMethod;
+        static MethodInfo playMethod;
+        static MethodInfo pauseMethod;
+        static MethodInfo seekMethod;
         public TryPatchMovieTexture(Harmony harmony, int failLimit = 3) : base(harmony, failLimit) {}
 
         public override bool Patch()
@@ -156,6 +245,9 @@ public static class DCMSyncAnm
             if (t != null)
             {
                 resetMethod = t.GetMethod("ResetMovie");
+                playMethod = t.GetMethod("PlayMovie");
+                pauseMethod = t.GetMethod("PauseMovie");
+                seekMethod = t.GetMethod("SeekMovie");
                 return true;
             }
             return false;
@@ -164,6 +256,24 @@ public static class DCMSyncAnm
         public static void Reset()
         {
             resetMethod?.Invoke(null, null);
+            playMethod?.Invoke(null, null);
+        }
+
+        public static void SetPlaying(bool isPlaying)
+        {
+            if (isPlaying)
+            {
+                playMethod?.Invoke(null, null);
+            }
+            else
+            {
+                pauseMethod?.Invoke(null, null);
+            }
+        }
+
+        public static void Seek(float time)
+        {
+            seekMethod?.Invoke(null, new object[] { time });
         }
     }
 
@@ -190,7 +300,7 @@ public static class DCMSyncAnm
                 if (fieldInfo != null)
                 {
                     Animation animItemValue = (Animation)fieldInfo.GetValue(__instance);
-                    anmStates.Add(animItemValue[f_strAnimName]);
+                    animInfos.Add(new AnimInfo(f_strAnimName, animItemValue, animItemValue[f_strAnimName]));
                 }
                 
             }
