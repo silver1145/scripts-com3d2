@@ -22,8 +22,8 @@ Some COM3D2 functional scripts
 
 ## Install
 
-Download {script_name}.cs under `scripts/` as needed, and move it to the `game_root_directory/scripts/`
-Some scripts need to do additional steps according to the `Note` section.
+Download {script_name}.cs under `scripts/` as needed, and move it to the `game_root_directory/scripts/`.
+Some scripts need additional steps according to the `Note` section.
 
 ### change_tex_fix
 
@@ -33,7 +33,7 @@ Previously, these textures could only be loaded through `COM3D2.StopQuitting.Plu
 
 ### dcm_sync_anm
 
-When clicking the play button of `COM3D2.DanceCameraMotion.Plugin`, the item anm will be synchronized to frame 0 (also support SceneCapture). If `COM3D2.MovieTexture.Plugin` is installed, the texture will also be synchronized.
+When clicking the play button of `COM3D2.DanceCameraMotion.Plugin`, the item anm will be synchronized when DCM Play/Pause/Seek. If `COM3D2.MovieTexture.Plugin` is installed, the texture will also be synchronized.
 Also added the DCM play shortcut key "`".
 
 ### extract_ks_scripts
@@ -68,6 +68,8 @@ Copy from `wrap_mode_extend` (by ghorsington).
 
 ### model_extend
 
+* Note: If slot_change has been installed before, you need to delete `slot_change.cs` in `game_root_directory/scripts/`.
+
 Load the extended configs (basebone/shadow).
 Automatically set BaseBoneName to `_ROOT_` when loading `*.bodybone.model` [legacy feature]
 
@@ -92,8 +94,6 @@ Description:
    * On: Cast shadow
    * TwoSided: Cast two-sided shadow
    * ShadowsOnly: Cast shadow only. The mesh itself will be hidden.
-
-* Note: If slot_change has been installed before, you need to delete `slot_change.cs` in `game_root_directory/scripts/`.
 
 <details>
 <summary>Default SlotName & BaseBoneName</summary>
