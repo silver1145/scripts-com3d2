@@ -841,6 +841,24 @@ public static class MateTexCache
         return codeMatcher.InstructionEnumeration();
     }
 
+    public static IEnumerable<CodeInstruction> ReplaceAllDestroyImmediate(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        while (true)
+        {
+            codeMatcher.MatchForward(false, new[] { new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "DestroyImmediate", new[] { typeof(UnityEngine.Object) })) });
+            if (codeMatcher.IsValid)
+            {
+                codeMatcher.SetInstruction(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MateTexCache), "DestroyImmediate")));
+            }
+            else
+            {
+                break;
+            }
+        } 
+        return codeMatcher.InstructionEnumeration();
+    }
+
     [HarmonyPatch(typeof(TBodySkin), "DeleteObj")]
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> DeleteObjTranspiler(IEnumerable<CodeInstruction> instructions)
@@ -1219,7 +1237,7 @@ public static class MateTexCache
         // `NPRShaderManaged.ChangeNPRSMaterial`
         public static IEnumerable<CodeInstruction> ChangeNPRSMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
         {
-            return ReplaceDestroyImmediate(ReplaceDestroyImmediate(instructions));
+            return ReplaceAllDestroyImmediate(instructions);
         }
     }
 
