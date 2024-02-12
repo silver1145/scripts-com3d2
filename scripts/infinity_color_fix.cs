@@ -232,6 +232,7 @@ public static class InfinityColorFix
             {
                 patched = Patch();
             }
+            catch {}
             finally
             {
                 if (patched || (failLimit > 0 && ++failCount >= failLimit))

@@ -1128,6 +1128,7 @@ public static class MateTexCache
             {
                 patched = Patch();
             }
+            catch {}
             finally
             {
                 if (patched || (failLimit > 0 && ++failCount >= failLimit))
