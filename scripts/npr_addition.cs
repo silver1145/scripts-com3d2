@@ -25,15 +25,10 @@ public static class NPRShaderAdd
 
     public static void Main()
     {
-        // GetPostProcessingStatus
-        Type targetType = AccessTools.TypeByName("COM3D2.SceneCaptureAddition.Plugin.SceneCaptureAddition");
-        if (targetType != null)
-        {
-            HDREnabled = AccessTools.Field(targetType, "HDREnabled");
-        }
         LoadShaderConfig();
         instance = Harmony.CreateAndPatchAll(typeof(NPRShaderAdd));
         new TryPatchSetTexture(instance);
+        new TryPatchSceneCaptureAddition(instance);
     }
 
     public static void Unload()
@@ -671,5 +666,22 @@ public static class NPRShaderAdd
                 .SetInstruction(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("SetTexture")));
             return codeMatcher.InstructionEnumeration();
         }
+    }
+
+    class TryPatchSceneCaptureAddition : TryPatch
+    {
+        public TryPatchSceneCaptureAddition(Harmony harmony, int failLimit = 3) : base(harmony, failLimit) {}
+
+        public override bool Patch()
+        {
+            Type t = AccessTools.TypeByName("COM3D2.SceneCaptureAddition.Plugin.SceneCaptureAddition");
+            if (t != null)
+            {
+                HDREnabled = AccessTools.Field(t, "HDREnabled");
+                return true;
+            }
+            return false;
+        }
+
     }
 }
