@@ -327,6 +327,20 @@ public static class NPRShaderAdd
         return codeMatcher.InstructionEnumeration();
     }
 
+    [HarmonyPatch(typeof(MaterialPane), "getMaterial")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> MaterialGetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj));
+        var newObj = codeMatcher.Instruction;
+        codeMatcher.RemoveInstruction()
+            .MatchForward(false, new CodeMatch(OpCodes.Ldelem_Ref))
+            .Advance(1)
+            .Insert(newObj);
+        return codeMatcher.InstructionEnumeration();
+    }
+
     [HarmonyPatch(typeof(ObjectPane), "getMaterial")]
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> ObjectGetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
@@ -344,18 +358,20 @@ public static class NPRShaderAdd
         return codeMatcher.InstructionEnumeration();
     }
 
+    [HarmonyPatch(typeof(MaterialPane), "setMaterial")]
     [HarmonyPatch(typeof(ObjectPane), "setMaterial")]
     [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> ObjectSetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
+    public static IEnumerable<CodeInstruction> SetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj)).RemoveInstruction();
         return codeMatcher.InstructionEnumeration();
     }
 
+    [HarmonyPatch(typeof(MaterialPane), "resetMaterial")]
     [HarmonyPatch(typeof(ObjectPane), "resetMaterial")]
     [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> ObjectResetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
+    public static IEnumerable<CodeInstruction> ResetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj)).RemoveInstruction();
