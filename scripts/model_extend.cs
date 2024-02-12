@@ -66,6 +66,10 @@ public static class ModelExtend
     [HarmonyPrefix]
     public static void LoadPrefix(string filename, ref string bonename, ref ModelExtendData __state)
     {
+        if (filename.ToLower().EndsWith(".bodybone.model"))
+        {
+            bonename = "_ROOT_";
+        }
         string extendFilename = Path.ChangeExtension(filename, ".exmodel.xml");
         if (GameUty.FileSystem.IsExistentFile(extendFilename))
         {
