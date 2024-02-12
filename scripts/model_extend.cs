@@ -1,6 +1,6 @@
 // #author silver1145
 // #name ModelExtend
-// #desc Allow All Slots to Use Body Bone
+// #desc Model Extend
 
 using UnityEngine;
 using HarmonyLib;

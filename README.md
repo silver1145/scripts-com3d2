@@ -13,7 +13,7 @@ Some COM3D2 functional scripts
 | partsedit_add_bone             | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                                |
 | vym_syasei_sync_with_inoutanim | Vym Syasei Sync With Inoutanim                   | COM3D2.VibeYourMaid.Plugin<br>COM3D2.InOutAnimation.Plugin             |
 | wrap_mode_extend_sc            | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                             |
-| slot_change                    | Allow All Slots to Use Body Bone                 | -                                                                      |
+| model_extend                   | Model Extend                                     | -                                                                      |
 | npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                                |
 | vym_enhance                    | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                             |
 | mipmap_extend                  | Enable Mipmap for textures with `mipmap` in name | -                                                                      |
@@ -66,10 +66,99 @@ Allow Vym Syasei to sync With Inoutanim.
 Make textures repeated for SceneCapture.
 Copy from `wrap_mode_extend` (by ghorsington).
 
-### slot_change
+### model_extend
 
-Allow All Slots to Use Body Bone.
-Just rename `{origin}.model` to `{origin}.bodybone.model`.
+Load the extended configs (basebone/shadow).
+Automatically set BaseBoneName to `_ROOT_` when loading `*.bodybone.model` [legacy feature]
+
+Example Config (create `{name}.exmodel.xml` for `{name}.model` in the same path):
+
+```xml
+<plugins>
+    <plugin name="ModelExtend">
+        <BaseBoneName>_ROOT_</BaseBoneName>
+        <ReceiveShadows>True</ReceiveShadows>
+        <ShadowCastingMode>On</ShadowCastingMode>
+    </plugin>
+</plugins>
+```
+
+Description:
+
+1. BaseBoneName: Game loads models with different bone structures according to BaseBoneName. If you need to load a full-body model on some slots (like headset), set it to `_ROOT_`. For more information, please refer to the table below.
+2. ReceiveShadows: [True|False] Whether to accept shadows
+3. ShadowCastingMode: [Off|On|TwoSided|ShadowsOnly]
+   * Off: cast no shadow
+   * On: Cast shadow
+   * TwoSided: Cast two-sided shadow
+   * ShadowsOnly: Cast shadow only. The mesh itself will be hidden.
+
+* Note: If slot_change has been installed before, you need to delete `slot_change.cs` in `game_root_directory/scripts/`.
+
+<details>
+<summary>Default SlotName & BaseBoneName</summary>
+
+| Slot Name     | BaseBoneName  |
+| ------------- | ------------- |
+| body          | \_ROOT\_      |
+| head          | Bip01 Head    |
+| eye           | Bip01 Head    |
+| hairF         | Bip01 Head    |
+| hairR         | Bip01 Head    |
+| hairS         | Bip01 Head    |
+| hairT         | Bip01 Head    |
+| wear          | \_ROOT\_      |
+| skirt         | \_ROOT\_      |
+| onepiece      | \_ROOT\_      |
+| mizugi        | \_ROOT\_      |
+| panz          | \_ROOT\_      |
+| bra           | \_ROOT\_      |
+| stkg          | \_ROOT\_      |
+| shoes         | \_ROOT\_      |
+| headset       | Bip01 Head    |
+| glove         | \_ROOT\_      |
+| accHead       | Bip01 Head    |
+| hairAho       | Bip01 Head    |
+| accHana       | \_ROOT\_      |
+| accHa         | Bip01 Head    |
+| accKami_1_    | Bip01 Head    |
+| accMiMiR      | Bip01 Head    |
+| accKamiSubR   | Bip01 Head    |
+| accNipR       | \_ROOT\_      |
+| HandItemR     | _IK_handR     |
+| accKubi       | Bip01 Spine1a |
+| accKubiwa     | Bip01 Neck    |
+| accHeso       | Bip01 Head    |
+| accUde        | \_ROOT\_      |
+| accAshi       | \_ROOT\_      |
+| accSenaka     | \_ROOT\_      |
+| accShippo     | Bip01 Spine   |
+| accAnl        | \_ROOT\_      |
+| accVag        | \_ROOT\_      |
+| kubiwa        | \_ROOT\_      |
+| megane        | Bip01 Head    |
+| accXXX        | \_ROOT\_      |
+| chinko        | Bip01 Pelvis  |
+| chikubi       | \_ROOT\_      |
+| accHat        | Bip01 Head    |
+| kousoku_upper | \_ROOT\_      |
+| kousoku_lower | \_ROOT\_      |
+| seieki_naka   | \_ROOT\_      |
+| seieki_hara   | \_ROOT\_      |
+| seieki_face   | \_ROOT\_      |
+| seieki_mune   | \_ROOT\_      |
+| seieki_hip    | \_ROOT\_      |
+| seieki_ude    | \_ROOT\_      |
+| seieki_ashi   | \_ROOT\_      |
+| accNipL       | \_ROOT\_      |
+| accMiMiL      | Bip01 Head    |
+| accKamiSubL   | Bip01 Head    |
+| accKami_2_    | Bip01 Head    |
+| accKami_3_    | Bip01 Head    |
+| HandItemL     | _IK_handL     |
+| underhair     | \_ROOT\_      |
+| moza          | \_ROOT\_      |
+</details>
 
 ### npr_addition
 
