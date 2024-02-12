@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Newtonsoft.Json.Linq;
 using COM3D2.NPRShader.Plugin;
+using COM3D2.NPRShader.Managed;
 
 public static class NPRShaderAdd
 {
@@ -314,9 +315,21 @@ public static class NPRShaderAdd
             .InstructionEnumeration();
     }
 
+    [HarmonyPatch(typeof(NPRShaderManaged), "ChangeNPRSMaterial")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> ChangeNPRSMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj));
+        codeMatcher.RemoveInstruction()
+            .MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.PropertySetter(typeof(UnityEngine.Object), "name")))
+            .RemoveInstructionsWithOffsets(1, 18);
+        return codeMatcher.InstructionEnumeration();
+    }
+
     [HarmonyPatch(typeof(ObjectPane), "getMaterial")]
     [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> ObjectGetMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    public static IEnumerable<CodeInstruction> ObjectGetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj));
@@ -333,7 +346,7 @@ public static class NPRShaderAdd
 
     [HarmonyPatch(typeof(ObjectPane), "setMaterial")]
     [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> ObjectSetMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    public static IEnumerable<CodeInstruction> ObjectSetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj)).RemoveInstruction();
@@ -342,7 +355,7 @@ public static class NPRShaderAdd
 
     [HarmonyPatch(typeof(ObjectPane), "resetMaterial")]
     [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> ObjectResetMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    public static IEnumerable<CodeInstruction> ObjectResetMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj)).RemoveInstruction();
