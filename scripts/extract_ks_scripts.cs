@@ -68,6 +68,7 @@ public static class ExtractKsScripts
                                 writer.Write(f.ReadAll());
                             }
                         }
+                        f.Dispose();
                     }
                     GameMain.Instance.SysDlg.Close();
                     Debug.Log($"Export Success!");

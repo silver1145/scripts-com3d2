@@ -793,7 +793,7 @@ public static class MateTexCache
     // `ImportCM.CreateTexture`
     /*
     public static Texture2D CreateTexture(string f_strFileName)
-	{
+    {
 +       Texture2D tex = MateTexCache.GetTexture2D(f_strFileName);
 +       if (tex != null)
 +       {
