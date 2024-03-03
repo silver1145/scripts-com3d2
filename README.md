@@ -94,10 +94,10 @@ Description:
    * On: Cast shadow
    * TwoSided: Cast two-sided shadow
    * ShadowsOnly: Cast shadow only. The mesh itself will be hidden.
-   * VertexColorFilename: Vertex Color. The following blender script can be used for exporting
-   * UV2Filename: Extended UV2
-   * UV3Filename: Extended UV3
-   * UV4Filename: Extended UV4
+4. VertexColorFilename: Vertex Color. The following blender script can be used for exporting
+5. UV2Filename: Extended UV2
+6. UV3Filename: Extended UV3
+7. UV4Filename: Extended UV4
 
 <details>
 <summary>Exporting Script for Blender</summary>
