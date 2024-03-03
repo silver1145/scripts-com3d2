@@ -70,7 +70,7 @@ Copy from `wrap_mode_extend` (by ghorsington).
 
 * Note: If slot_change has been installed before, you need to delete `slot_change.cs` in `game_root_directory/scripts/`.
 
-Load the extended configs (basebone/shadow).
+Load the extended configs (basebone/shadow).  
 Automatically set BaseBoneName to `_ROOT_` when loading `*.bodybone.model` [legacy feature]
 
 Example Config (create `{name}.exmodel.xml` for `{name}.model` in the same path):
@@ -94,7 +94,66 @@ Description:
    * On: Cast shadow
    * TwoSided: Cast two-sided shadow
    * ShadowsOnly: Cast shadow only. The mesh itself will be hidden.
+   * VertexColorFilename: Vertex Color. The following blender script can be used for exporting
+   * UV2Filename: Extended UV2
+   * UV3Filename: Extended UV3
+   * UV4Filename: Extended UV4
 
+<details>
+<summary>Exporting Script for Blender</summary>
+
+```python
+import bpy
+import bmesh
+import struct
+import numpy as np
+from pathlib import Path
+
+save_path = Path(bpy.data.filepath).parent / "model"
+
+selected_objects = bpy.context.selected_objects
+
+for obj in selected_objects:
+    if obj.type == "MESH":
+        mesh = obj.data
+        bm = bmesh.new()
+        bm.from_mesh(mesh)
+        last_vert_count = -1
+        color_layer = bm.loops.layers.color.active if bm.loops.layers.color.active else None
+        for i in range(len(bm.loops.layers.uv)):
+            uv_lay = bm.loops.layers.uv[i]
+            uvs = []
+            colors = []
+            vert_count = 0
+            for vert in bm.verts:
+                vert_uv = []
+                for loop in vert.link_loops:
+                    uv = loop[uv_lay].uv
+                    if uv not in vert_uv:
+                        vert_uv.append(uv)
+                        uvs.append(uv)
+                        if color_layer:
+                            colors.append(loop[color_layer])
+                        vert_count += 1
+            if last_vert_count < 0:
+                last_vert_count = vert_count
+            elif last_vert_count != vert_count:
+                raise Exception(f"Mesh \"{mesh.name}\" has different uv counts")
+            if i == 0:
+                if color_layer:
+                    save_file = save_path / f"{mesh.name}.vcol"
+                    color_s = np.array(colors, dtype=np.float32)
+                    with save_file.open("wb") as f:
+                        f.write(len(colors).to_bytes(4, byteorder='little', signed=True) + color_s.tobytes())
+            else:
+                save_file = save_path / f"{mesh.name}.uv_{i + 1}"
+                uv_s = np.array(uvs, dtype=np.float32)
+                print(uv_s.shape)
+                with save_file.open("wb") as f:
+                    f.write((len(uvs)).to_bytes(4, byteorder="little", signed=True) + uv_s.tobytes())
+```
+
+</details>
 <details>
 <summary>Default SlotName & BaseBoneName</summary>
 
