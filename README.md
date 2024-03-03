@@ -110,7 +110,7 @@ import numpy as np
 from pathlib import Path
 
 save_path = Path(bpy.data.filepath).parent / "model"
-
+save_path.mkdir(exist_ok=True)
 selected_objects = bpy.context.selected_objects
 
 for obj in selected_objects:
