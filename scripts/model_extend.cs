@@ -82,24 +82,26 @@ public static class ModelExtend
                 {
                     data = f.ReadAll();
                 }
-                BinaryReader binaryReader = new BinaryReader(new MemoryStream(data), Encoding.UTF8);
-                if (binaryReader.ReadInt32() == vertexCount)
+                using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(data), Encoding.UTF8))
                 {
-                    Color[] colors = new Color[vertexCount];
-                    for (int i = 0; i < vertexCount; i++)
+                    if (binaryReader.ReadInt32() == vertexCount)
                     {
-                        colors[i] = new Color(
-                            binaryReader.ReadSingle(),
-                            binaryReader.ReadSingle(),
-                            binaryReader.ReadSingle(),
-                            binaryReader.ReadSingle()
-                        );
+                        Color[] colors = new Color[vertexCount];
+                        for (int i = 0; i < vertexCount; i++)
+                        {
+                            colors[i] = new Color(
+                                binaryReader.ReadSingle(),
+                                binaryReader.ReadSingle(),
+                                binaryReader.ReadSingle(),
+                                binaryReader.ReadSingle()
+                            );
+                        }
+                        ret = colors;
                     }
-                    ret = colors;
-                }
-                else
-                {
-                    Debug.LogWarning($"Wrong VertexCount: {filename}");
+                    else
+                    {
+                        Debug.LogWarning($"Wrong VertexCount: {filename}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -124,22 +126,24 @@ public static class ModelExtend
                 {
                     data = f.ReadAll();
                 }
-                BinaryReader binaryReader = new BinaryReader(new MemoryStream(data), Encoding.UTF8);
-                if (binaryReader.ReadInt32() == vertexCount)
+                using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(data), Encoding.UTF8))
                 {
-                    Vector2[] uvs = new Vector2[vertexCount];
-                    for (int i = 0; i < vertexCount; i++)
+                    if (binaryReader.ReadInt32() == vertexCount)
                     {
-                        uvs[i] = new Vector2(
-                            binaryReader.ReadSingle(),
-                            binaryReader.ReadSingle()
-                        );
+                        Vector2[] uvs = new Vector2[vertexCount];
+                        for (int i = 0; i < vertexCount; i++)
+                        {
+                            uvs[i] = new Vector2(
+                                binaryReader.ReadSingle(),
+                                binaryReader.ReadSingle()
+                            );
+                        }
+                        ret = uvs;
                     }
-                    ret = uvs;
-                }
-                else
-                {
-                    Debug.LogWarning($"Wrong VertexCount: {filename}");
+                    else
+                    {
+                        Debug.LogWarning($"Wrong VertexCount: {filename}");
+                    }
                 }
             }
             catch (Exception ex)

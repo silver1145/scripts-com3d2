@@ -13,6 +13,7 @@ using System.Reflection.Emit;
 using Newtonsoft.Json.Linq;
 using COM3D2.NPRShader.Plugin;
 using COM3D2.NPRShader.Managed;
+using System.Text;
 
 public static class NPRShaderAdd
 {
@@ -21,12 +22,14 @@ public static class NPRShaderAdd
     public static string[] _BASECOLORPROP;
     public static string[] _SHADERKEYWORD;
     public static List<string> _TOGGLEPROP;
+    public static Dictionary<string, string> shaderMatNames;
     private static FieldInfo HDREnabled;
     private static float k_MaxForOverexposedColor = 191.0f / 255;
 
     public static void Main()
     {
         LoadShaderConfig();
+        LoadShaderMatNames();
         instance = Harmony.CreateAndPatchAll(typeof(NPRShaderAdd));
         new TryPatchSetTexture(instance);
         new TryPatchSceneCaptureAddition(instance);
@@ -36,6 +39,13 @@ public static class NPRShaderAdd
     {
         instance.UnpatchAll(instance.Id);
         instance = null;
+        _BASEFRPROP = null;
+        _BASECOLORPROP = null;
+        _SHADERKEYWORD = null;
+        _TOGGLEPROP?.Clear();
+        _TOGGLEPROP = null;
+        shaderMatNames?.Clear();
+        shaderMatNames = null;
     }
 
     public static void LoadShaderConfig()
@@ -107,15 +117,35 @@ public static class NPRShaderAdd
         return _TOGGLEPROP.Contains(prop);
     }
 
-    public static bool IsKeyword(string prop, Material m)
+    public static bool IsKeyword(string prop, float value, Material mat)
     {
-        if (m.shader == null || m.shader.name.ToLower().Contains("nprtoon"))
+        if (mat.shader == null || mat.shader.name.ToLower().Contains("nprtoon"))
         {
             return true;
         }
+        if (prop.EndsWith("_SSKEYWORD", StringComparison.OrdinalIgnoreCase))
+        {
+            string keyword = prop.ToUpper().Replace("_SSKEYWORD", string.Empty);
+            if (value == 1f)
+            {
+                mat.EnableKeyword(keyword);
+            }
+            else
+            {
+                mat.DisableKeyword(keyword);
+            }
+            return false;
+        }
         if (Array.Exists(_SHADERKEYWORD, element => element == prop))
         {
-            return true;
+            if (value == 1f)
+            {
+                mat.EnableKeyword(prop);
+            }
+            else
+            {
+                mat.DisableKeyword(prop);
+            }
         }
         return false;
     }
@@ -142,11 +172,141 @@ public static class NPRShaderAdd
 
     public static void SetTexture(Material mat, string name, Texture2D tex)
     {
-        mat.SetTexture(name, tex);
-        if (name.ToLower().Contains("cube") && mat.GetTexture(name) == null)
+        if (name.ToLower().Contains("cubetex"))
         {
             mat.SetTexture(name, CubemapConverter.ByTexture2D(tex));
         }
+        else
+        {
+            mat.SetTexture(name, tex);
+        }
+    }
+
+    public static bool TrySetCubeMap(string texType, string prop, BinaryReader br, Material mat, TBodySkin bodyskin)
+    {
+        if (texType != "cube")
+        {
+            return false;
+        }
+        string texName = br.ReadString();
+        br.ReadString();    // Tex Path
+        Texture2D tex = ImportCM.CreateTexture(texName + ".tex");
+		tex.name = texName;
+        mat.SetTexture(prop, CubemapConverter.ByTexture2D(tex));
+        // Only Manage Texture2D
+        if (bodyskin != null)
+        {
+            bodyskin.listDEL.Add(tex);
+        }
+        br.ReadSingle();    // Offset.x
+        br.ReadSingle();    // Offset.y
+        br.ReadSingle();    // Scale.x
+        br.ReadSingle();    // Scale.x
+        return true;
+    }
+
+    public static void LoadShaderMatNames()
+    {
+        if (shaderMatNames == null)
+        {
+            shaderMatNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+        foreach (var p in AssetLoader.m_dicCacheMaterial)
+        {
+            if (p.Value != null)
+            {
+                shaderMatNames[p.Value.shader.name] = p.Key;
+            }
+        }
+    }
+
+    public static void AddCacheMaterial(Material material)
+    {
+        string filename = material.name;
+        if (filename.ToLower().StartsWith("com3d2mod_"))
+        {
+            filename = filename.Substring(10);
+        }
+        AssetLoader.m_dicCacheMaterial[filename] = material;
+    }
+
+    public static bool IsSSMaterial(string filename)
+    {
+        if (GameUty.FileSystem.IsExistentFile(filename))
+        {
+            try
+            {
+                byte[] data;
+                using (var f = GameUty.FileOpen(filename))
+                {
+                    data = f.ReadAll();
+                }
+                using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(data), Encoding.UTF8))
+                {
+                    binaryReader.ReadString();  // CM3D2_MATERIAL
+                    binaryReader.ReadInt32();   // Version
+                    binaryReader.ReadString();  // Mate Name
+                    binaryReader.ReadString();  // Pmat
+                    string shaderName = binaryReader.ReadString();
+                    return shaderMatNames.ContainsKey(shaderName);
+                }
+            }
+            catch {}
+        }
+        return false;
+    }
+
+    [HarmonyPatch(typeof(Util), "LoadALLShaders")]
+    [HarmonyPrefix]
+    public static void LoadALLShadersPrefix()
+    {
+        AssetLoader.m_dicCacheMaterial = new Dictionary<string, Material>(StringComparer.OrdinalIgnoreCase);
+    }
+
+    [HarmonyPatch(typeof(Util), "LoadALLShaders")]
+    [HarmonyPostfix]
+    public static void LoadALLShadersPostfix()
+    {
+        LoadShaderMatNames();
+    }
+
+    [HarmonyPatch(typeof(Util), "LoadALLShaders")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> LoadALLShadersTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions)
+            .MatchForward(false, new CodeMatch(OpCodes.Ldc_I4_1))
+            .Advance(-1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 4))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(AddCacheMaterial))));
+        return codeMatcher.InstructionEnumeration();
+    }
+
+    [HarmonyPatch(typeof(NPRShader), "ReadMaterial")]
+    [HarmonyPatch(typeof(AssetLoader), "ReadMaterialWithSetShader")]
+    [HarmonyPrefix]
+    public static void ReadMaterialPrefix(BinaryReader r, ref string shaderMatName)
+    {
+        if (AssetLoader.m_dicCacheMaterial.ContainsKey(shaderMatName))
+        {
+            return;
+        }
+        long seekPos = r.BaseStream.Position;
+        using (BinaryReader br = new BinaryReader(r.BaseStream))
+        {
+            try
+            {
+                br.ReadString(); // Pmat
+                string shaderName = br.ReadString();
+                if (shaderMatNames.TryGetValue(shaderName, out var name))
+                {
+                    shaderMatName = name;
+                }
+            }
+            catch {}
+            br.m_stream = null;
+        }
+        r.BaseStream.Seek(seekPos, SeekOrigin.Begin);
     }
 
     [HarmonyPatch(typeof(NPRShader), "ReadMaterial")]
@@ -163,16 +323,26 @@ public static class NPRShaderAdd
             .MatchBack(false, new[] { new CodeMatch(OpCodes.Leave) })
             .Advance(1)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Nop));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldstr, "null")).Advance(-1);
+        object endLabel = codeMatcher.InstructionAt(8).operand;
+        codeMatcher.InsertAndAdvance(codeMatcher.Instruction)
+            .InsertAndAdvance(codeMatcher.InstructionAt(5))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+            .InsertAndAdvance(codeMatcher.InstructionAt(4))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_2))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(TrySetCubeMap))))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Brtrue_S, endLabel));
         CodeMatch[] matchSetColor = {
             new CodeMatch(OpCodes.Callvirt, typeof(Material).GetMethod("SetColor", new[] {typeof(string), typeof(Color)}))
         };
         codeMatcher.MatchForward(false, matchSetColor)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("CorrectHDRColor")));
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod(nameof(CorrectHDRColor))));
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldstr, "Toggle"))
             .Advance(2)
             .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(-3)))
+            .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(1)))
             .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(4)))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("IsKeyword")))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod(nameof(IsKeyword))))
             .InsertAndAdvance(new CodeInstruction(OpCodes.And));
         return codeMatcher.InstructionEnumeration();
     }
@@ -191,16 +361,26 @@ public static class NPRShaderAdd
             .MatchBack(false, new[] { new CodeMatch(OpCodes.Leave) })
             .Advance(1)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Nop));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldstr, "null")).Advance(-1);
+        object endLabel = codeMatcher.InstructionAt(8).operand;
+        codeMatcher.InsertAndAdvance(codeMatcher.Instruction)
+            .InsertAndAdvance(codeMatcher.InstructionAt(5))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+            .InsertAndAdvance(codeMatcher.InstructionAt(4))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldnull))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(TrySetCubeMap))))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Brtrue_S, endLabel));
         CodeMatch[] matchSetColor = {
             new CodeMatch(OpCodes.Callvirt, typeof(Material).GetMethod("SetColor", new[] {typeof(string), typeof(Color)}))
         };
         codeMatcher.MatchForward(false, matchSetColor)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("CorrectHDRColor")));
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod(nameof(CorrectHDRColor))));
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldstr, "Toggle"))
             .Advance(2)
             .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(-3)))
+            .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(1)))
             .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(4)))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("IsKeyword")))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod(nameof(IsKeyword))))
             .InsertAndAdvance(new CodeInstruction(OpCodes.And));
         return codeMatcher.InstructionEnumeration();
     }
@@ -285,7 +465,7 @@ public static class NPRShaderAdd
         int blendPos = codeMatcher.Pos;
         codeMatcher.InsertAndAdvance(codeMatcher.InstructionAt(0))
             .InsertAndAdvance(codeMatcher.InstructionAt(1))
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("IsToggle")))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod(nameof(IsToggle))))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Brtrue, toggleLabel));
         return codeMatcher.InstructionEnumeration();
     }
@@ -320,10 +500,28 @@ public static class NPRShaderAdd
     public static IEnumerable<CodeInstruction> ChangeNPRSMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Brtrue))
+            .InsertAndAdvance(codeMatcher.Instruction)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_3))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(IsSSMaterial))));
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj));
         codeMatcher.RemoveInstruction()
             .MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.PropertySetter(typeof(UnityEngine.Object), "name")))
             .RemoveInstructionsWithOffsets(1, 18);
+        return codeMatcher.InstructionEnumeration();
+    }
+
+    [HarmonyPatch(typeof(ObjectWindow), "UpdaateMaterial")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> UpdaateMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(string), "Contains")))
+        .Advance(1)
+            .Insert(new CodeInstruction(OpCodes.Or))
+            .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(IsSSMaterial))))
+            .Insert(codeMatcher.InstructionAt(-5))
+            .Insert(codeMatcher.InstructionAt(-6));
         return codeMatcher.InstructionEnumeration();
     }
 
@@ -380,23 +578,26 @@ public static class NPRShaderAdd
 
     public class CubemapConverter
     {
-        public static Cubemap ByTexture2D(Texture2D tempTex)
+        public static Cubemap ByTexture2D(Texture2D originTex)
         {
-            if (Math.Abs((float)tempTex.width / tempTex.height - 2) < 0.05)
+            if (Math.Abs((float)originTex.width / originTex.height - 2) < 0.05)
             {
-                return ByLatLongTexture2D(tempTex);
+                return ByLatLongTexture2D(originTex);
             }
-            return ByCubeTexture2D(tempTex);
+            return ByCubeTexture2D(originTex);
         }
 
-        public static Cubemap ByCubeTexture2D(Texture2D tempTex)
+        public static Cubemap ByCubeTexture2D(Texture2D originTex)
         {
-            tempTex = FlipPixels(tempTex, false, true);
+            Texture2D tempTex = new Texture2D(originTex.width, originTex.height, originTex.format, false);
+            Graphics.CopyTexture(originTex, tempTex);
+            FlipPixels(tempTex, false, true);
+            Cubemap cubemap = null;
             if (Math.Round((float)tempTex.width / tempTex.height) == 6)
             {
                 int everyW = (int)(tempTex.width / 6f);
                 int cubeMapSize = Mathf.Min(everyW, tempTex.height);
-                Cubemap cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
+                cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
                 cubemap.SetPixels(tempTex.GetPixels(0, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
                 cubemap.SetPixels(tempTex.GetPixels(2 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
@@ -404,13 +605,12 @@ public static class NPRShaderAdd
                 cubemap.SetPixels(tempTex.GetPixels(4 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
                 cubemap.SetPixels(tempTex.GetPixels(5 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
                 cubemap.Apply();
-                return cubemap;
             }
             else if (Math.Round((float)tempTex.height / tempTex.width) == 6)
             {
                 int everyH = (int)(tempTex.height / 6f);
                 int cubeMapSize = Mathf.Min(tempTex.width, everyH);
-                Cubemap cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
+                cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
                 cubemap.SetPixels(tempTex.GetPixels(0, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
                 cubemap.SetPixels(tempTex.GetPixels(0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
                 cubemap.SetPixels(tempTex.GetPixels(0, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
@@ -418,14 +618,13 @@ public static class NPRShaderAdd
                 cubemap.SetPixels(tempTex.GetPixels(0, 4 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
                 cubemap.SetPixels(tempTex.GetPixels(0, 5 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
                 cubemap.Apply();
-                return cubemap;
             }
             else if (Math.Abs((float)tempTex.width / tempTex.height - 4.0 / 3.0) < 0.05)
             {
                 int everyW = (int)(tempTex.width / 4f);
                 int everyH = (int)(tempTex.height / 3f);
                 int cubeMapSize = Mathf.Min(everyW, everyH);
-                Cubemap cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
+                cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
                 cubemap.SetPixels(tempTex.GetPixels(0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
@@ -433,14 +632,13 @@ public static class NPRShaderAdd
                 cubemap.SetPixels(tempTex.GetPixels(3 * cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
                 cubemap.Apply();
-                return cubemap;
             }
             else if (Math.Abs((float)tempTex.height / tempTex.width - 4.0 / 3.0) < 0.05)
             {
                 int everyW = (int)(tempTex.width / 3f);
                 int everyH = (int)(tempTex.height / 4f);
                 int cubeMapSize = Mathf.Min(everyW, everyH);
-                Cubemap cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
+                cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
                 cubemap.SetPixels(tempTex.GetPixels(0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
@@ -448,25 +646,28 @@ public static class NPRShaderAdd
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
                 cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 3 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
                 cubemap.Apply();
-                return cubemap;
             }
-            Debug.LogWarning($"Cannot be converted to Cubemap: {tempTex} ({tempTex.width}x{tempTex.height})");
-            return null;
+            else
+            {
+                Debug.LogWarning($"Cannot be converted to Cubemap: {tempTex} ({tempTex.width}x{tempTex.height})");
+            }
+            UnityEngine.Object.Destroy(tempTex);
+            return cubemap;
         }
 
         // from https://assetstore.unity.com/packages/tools/utilities/panorama-to-cubemap-13616
-        public static Cubemap ByLatLongTexture2D(Texture2D tempTex)
+        public static Cubemap ByLatLongTexture2D(Texture2D originTex)
         {
-            int everyW = (int)(tempTex.width / 4f);
-            int everyH = (int)(tempTex.height / 3f);
+            int everyW = (int)(originTex.width / 4f);
+            int everyH = (int)(originTex.height / 3f);
             int cubeMapSize = Mathf.Min(everyW, everyH);
             Cubemap cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
-            cubemap.SetPixels(CreateCubemapTexture(tempTex, cubeMapSize, 0).GetPixels(), CubemapFace.NegativeX);
-            cubemap.SetPixels(CreateCubemapTexture(tempTex, cubeMapSize, 1).GetPixels(), CubemapFace.PositiveX);
-            cubemap.SetPixels(CreateCubemapTexture(tempTex, cubeMapSize, 2).GetPixels(), CubemapFace.PositiveZ);
-            cubemap.SetPixels(CreateCubemapTexture(tempTex, cubeMapSize, 3).GetPixels(), CubemapFace.NegativeZ);
-            cubemap.SetPixels(CreateCubemapTexture(tempTex, cubeMapSize, 4).GetPixels(), CubemapFace.PositiveY);
-            cubemap.SetPixels(CreateCubemapTexture(tempTex, cubeMapSize, 5).GetPixels(), CubemapFace.NegativeY);
+            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 0).GetPixels(), CubemapFace.NegativeX);
+            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 1).GetPixels(), CubemapFace.PositiveX);
+            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 2).GetPixels(), CubemapFace.PositiveZ);
+            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 3).GetPixels(), CubemapFace.NegativeZ);
+            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 4).GetPixels(), CubemapFace.PositiveY);
+            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 5).GetPixels(), CubemapFace.NegativeY);
             cubemap.Apply();
             return cubemap;
         }
@@ -693,7 +894,7 @@ public static class NPRShaderAdd
             };
             codeMatcher.End();
             codeMatcher.MatchBack(false, matchSetTexture)
-                .SetInstruction(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod("SetTexture")));
+                .SetInstruction(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod(nameof(SetTexture))));
             return codeMatcher.InstructionEnumeration();
         }
     }
