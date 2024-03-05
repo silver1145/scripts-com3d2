@@ -30,9 +30,12 @@ public static class SyaseiSync
 
     [HarmonyPatch(typeof(VibeYourMaid), "SyaseiCheck")]
     [HarmonyPostfix]
-    public static void SyaseiCheckPostfix(int maidID, ref VibeYourMaid __instance, ref bool __result)
+    public static void SyaseiCheckPostfix(int maidID, float check, ref VibeYourMaid __instance, ref bool __result)
     {
-        isSyasei[__instance.stockMaids[maidID].mem] = __result;
+        if (check == 85.0f)
+        {
+            isSyasei[__instance.stockMaids[maidID].mem] = __result;
+        }
     }
     
     [HarmonyPatch(typeof(InOutAnimation), "IsShooting")]

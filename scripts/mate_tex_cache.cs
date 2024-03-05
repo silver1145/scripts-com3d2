@@ -593,32 +593,48 @@ public static class MateTexCache
     [HarmonyPrefix]
     public static bool RendererGetMaterial(ref Renderer __instance, ref Material __result)
     {
-        __result = __instance.sharedMaterial;
-        return false;
+        if (__instance is SkinnedMeshRenderer)
+        {
+            __result = __instance.sharedMaterial;
+            return false;
+        }
+        return true;
     }
 
     [HarmonyPatch(typeof(Renderer), "material", MethodType.Setter)]
     [HarmonyPrefix]
     public static bool RendererSetMaterial(ref Renderer __instance, Material value)
     {
-        __instance.sharedMaterial = value;
-        return false;
+        if (__instance is SkinnedMeshRenderer)
+        {
+            __instance.sharedMaterial = value;
+            return false;
+        }
+        return true;
     }
 
     [HarmonyPatch(typeof(Renderer), "materials", MethodType.Getter)]
     [HarmonyPrefix]
     public static bool RendererGetMaterials(ref Renderer __instance, ref Material[] __result)
     {
-        __result = __instance.sharedMaterials;
-        return false;
+        if (__instance is SkinnedMeshRenderer)
+        {
+            __result = __instance.sharedMaterials;
+            return false;
+        }
+        return true;
     }
 
     [HarmonyPatch(typeof(Renderer), "materials", MethodType.Setter)]
     [HarmonyPrefix]
     public static bool RendererSetMaterials(ref Renderer __instance, Material[] value)
     {
-        __instance.sharedMaterials = value;
-        return false;
+        if (__instance is SkinnedMeshRenderer)
+        {
+            __instance.sharedMaterials = value;
+            return false;
+        }
+        return true;
     }
 
     // `ImportCM.LoadMaterial` & `NPRShader.LoadMaterial`

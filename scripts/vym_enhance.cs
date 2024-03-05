@@ -177,7 +177,7 @@ public static class VYM_Enhance
     [HarmonyPatch(typeof(VibeYourMaid), "EffectAhe")]
     [HarmonyPrefix]
     public static bool EffectAhePrefix(ref VibeYourMaid __instance, Maid maid, VibeYourMaid.MaidState maidState, float sp)
-    {
+    {        
         int maidID = __instance.maidsState.IndexOf(maidState);
         maidID = maidID >= 0 ? maidID : 0;
         float aheValue3 = maidState.aheValue2;
@@ -196,19 +196,28 @@ public static class VYM_Enhance
             }
             return false;
         }
+        if (maidState.fAheDefEyeL < -1000) maidState.fAheDefEyeL = maid.body0.trsEyeL.localPosition.y  * __instance.fEyePosToSliderMul;
+        if (maidState.fAheDefEyeR < -1000) maidState.fAheDefEyeR = maid.body0.trsEyeR.localPosition.y  * __instance.fEyePosToSliderMul;
         if (!maidsAheEye.ContainsKey(maidID))
         {
-            maidsAheEye.Add(maidID, new MaidAheEye(maid.body0.trsEyeL.localPosition, maid.body0.trsEyeR.localPosition, maid.body0.trsEyeL.localScale, maid.body0.trsEyeR.localScale));
+            var eyeLLocalPosition = new Vector3(
+                maid.body0.trsEyeL.localPosition.x,
+                Math.Max((maidState.fAheDefEyeL + 0f) / __instance.fEyePosToSliderMul, 0f),
+                maid.body0.trsEyeL.localPosition.z
+            );
+            var eyeRLocalPosition = new Vector3(
+                maid.body0.trsEyeR.localPosition.x,
+                Math.Min((maidState.fAheDefEyeR - 0f) / __instance.fEyePosToSliderMul, 0.0f),
+                maid.body0.trsEyeR.localPosition.z
+            );
+            maidsAheEye.Add(maidID, new MaidAheEye(eyeLLocalPosition, eyeRLocalPosition, maid.body0.trsEyeL.localScale, maid.body0.trsEyeR.localScale));    
         }
-        if (maidState.fAheDefEyeL < -1000) maidState.fAheDefEyeL = (maid.body0.trsEyeL.localPosition.y - maidsAheEye[maidID].l_v.y) * __instance.fEyePosToSliderMul;
-        if (maidState.fAheDefEyeR < -1000) maidState.fAheDefEyeR = (maid.body0.trsEyeR.localPosition.y - maidsAheEye[maidID].r_v.y) * __instance.fEyePosToSliderMul;
-
         if (maidState.orgasmCmb > 0)
         {
             if (maidState.boostValue - 15 > 0 && maidState.exciteLevel >= 2)
             {
                 aheValue3 = maidState.aheValue2 + maidState.boostValue / 3;
-                if (maidState.stunFlag) aheValue3 += 30;
+                if (maidState.stunFlag) aheValue3 += 25;
             }
             if (aheValue3 > 60) aheValue3 = 60;
 
