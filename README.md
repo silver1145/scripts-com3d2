@@ -242,12 +242,14 @@ Configuration `BepinEx/config/MateTexCache.cfg`:
 
 1. GolbalEnable: Global Switch
 2. IgnoreSkin: Not cache Materials and Textures on body/head
-3. TempCacheCapacity: The size of the resource cache pool to be destroyed
-4. MateCacheType:
+3. IgnoreHair: Not cache Materials and Textures on hair*
+4. LoadAlwaysCheck: Always check if resource has been modified (instead of only when marked dirty)
+5. UnityTempCacheCapacity: The size of the resource cache pool to be destroyed
+6. MateCacheType:
     * All: Cache all `*.mate`
     * NPR_Only: Only cache `*NPR*.mate`
     * None: No cache
-5. TexCacheType:
+7. TexCacheType:
     * All: Cache all `*.tex`
     * ByMate: cache based on MateCacheType and material
 

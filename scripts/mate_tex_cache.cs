@@ -26,12 +26,16 @@ public static class MateTexCache
     // config
     static public ConfigFile configFile = new ConfigFile(Path.Combine(BepInEx.Paths.ConfigPath, "MateTexCache.cfg"), false);
     static public ConfigEntry<bool> _golbalEnable = configFile.Bind("MateTexCache Setting", "GolbalEnable", true, "Global Switch");
+    static public ConfigEntry<bool> _ignoreHair = configFile.Bind("MateTexCache Setting", "IgnoreHair", true, "Ignore Hair");
     static public ConfigEntry<bool> _ignoreSkin = configFile.Bind("MateTexCache Setting", "IgnoreSkin", true, "Ignore Skin");
-    static public ConfigEntry<int> _tempCacheCapacity = configFile.Bind("MateTexCache Setting", "TempCacheCapacity", 10, new ConfigDescription("Capacity for Temp Cache (will Destroy)", new AcceptableValueRange<int>(0, 100)));
+    static public ConfigEntry<bool> _alwaysCheck = configFile.Bind("MateTexCache Setting", "LoadAlwaysCheck", false, "Always Check");
+    static public ConfigEntry<int> _tempCacheCapacity = configFile.Bind("MateTexCache Setting", "UnityTempCacheCapacity", 10, new ConfigDescription("Capacity for Temp Cache (will Destroy)", new AcceptableValueRange<int>(0, 50)));
     static public ConfigEntry<string> _mateCacheType = configFile.Bind("MateTexCache Setting", "MateCacheType", "All", new ConfigDescription("MateCache Type", new AcceptableValueList<string>(MateCacheTypes.ToArray())));
     static public ConfigEntry<string> _texCacheType = configFile.Bind("MateTexCache Setting", "TexCacheType", "All", new ConfigDescription("TexCache Type", new AcceptableValueList<string>(TexCacheTypes.ToArray())));
     static bool golbalEnable = _golbalEnable.Value;
+    static bool ignoreHair = _ignoreHair.Value;
     static bool ignoreSkin = _ignoreSkin.Value;
+    static bool alwaysCheck = _alwaysCheck.Value;
     static int tempCacheCapacity = _tempCacheCapacity.Value;
     static int mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
     static int texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
@@ -68,10 +72,6 @@ public static class MateTexCache
 
         public bool CheckValid(byte[] data)
         {
-            if (!dirty)
-            {
-                return true;
-            }
             if (length == data.Length && md5 == GetMD5checksum(data))
             {
                 dirty = false;
@@ -319,7 +319,7 @@ public static class MateTexCache
                 {
                     data = getDataDelegate?.Invoke(key);
                 }
-                if (data != null && !valid)
+                if (data != null && (!valid || alwaysCheck))
                 {
                     valid = cItem.CheckValid(data);
                 }
@@ -550,6 +550,7 @@ public static class MateTexCache
         instance = Harmony.CreateAndPatchAll(typeof(MateTexCache));
         new TryPatchMaidLoader(instance);
         new TryPatchNPRShader(instance);
+        new TryPathConfigurationManager(instance);
     }
 
     public static void PatchWhenSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
@@ -567,7 +568,9 @@ public static class MateTexCache
         texCache = new UObjectCache<Texture2D>(GetFileContent);
         texTempManage = new Dictionary<BinaryReader, List<Texture2D>>();
         _golbalEnable.SettingChanged += (s, e) => golbalEnable = _golbalEnable.Value;
+        _ignoreHair.SettingChanged += (s, e) => ignoreHair = _ignoreHair.Value;
         _ignoreSkin.SettingChanged += (s, e) => ignoreSkin = _ignoreSkin.Value;
+        _alwaysCheck.SettingChanged += (s, e) => alwaysCheck = _alwaysCheck.Value;
         _tempCacheCapacity.SettingChanged += (s, e) => tempCacheCapacity = _tempCacheCapacity.Value;
         _mateCacheType.SettingChanged += (s, e) => mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
         _texCacheType.SettingChanged += (s, e) => texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
@@ -921,6 +924,7 @@ public static class MateTexCache
         flag |= mateCacheType == MateCacheType_NPR_Only && isNPR;
         string category = bodyskin?.Category.ToLower();
         flag &= !(ignoreSkin && (category == "head" || category == "body"));
+        flag &= !(ignoreHair && category.StartsWith("hair"));
         if (untruncatedData.Length > size)
         {
             untruncatedData = untruncatedData.Take(size).ToArray();
@@ -975,6 +979,7 @@ public static class MateTexCache
         flag |= mateCacheType == MateCacheType_NPR_Only && isNPR;
         string category = bodyskin?.Category.ToLower();
         flag &= !(ignoreSkin && (category == "head" || category == "body"));
+        flag &= !(ignoreHair && category.StartsWith("hair"));
         flag &= mat != null;
         if (untruncatedData.Length > size)
         {
@@ -1268,6 +1273,41 @@ public static class MateTexCache
             var mPrefix = SymbolExtensions.GetMethodInfo(() => RefreshCoPrefix());
             harmony.Patch(mOriginal, prefix: new HarmonyMethod(mPrefix));
             return true;
+        }
+    }
+
+    class TryPathConfigurationManager : TryPatch
+    {
+        private static List<ConfigurationManager.SettingEntryBase> configs;
+
+        public TryPathConfigurationManager(Harmony harmony, int failLimit = 1) : base(harmony, failLimit) {}
+
+        public override bool Patch()
+        {
+            var collectSettings = AccessTools.Method(AccessTools.TypeByName("ConfigurationManager.SettingSearcher"), "CollectSettings");
+            var collectSettingsPostfix = AccessTools.Method(typeof(TryPathConfigurationManager), "CollectSettingsPostfix");
+            harmony.Patch(collectSettings, postfix: new HarmonyMethod(collectSettingsPostfix));
+            return true;
+        }
+
+        public static void CollectSettingsPostfix(ref IEnumerable<ConfigurationManager.SettingEntryBase> results)
+        {
+            if (configs == null)
+            {
+                configs = new List<ConfigurationManager.SettingEntryBase>();
+                var scriptLoader = BepInEx.Bootstrap.Chainloader.PluginInfos.Values.Select(x => x.Instance).Where(x => x.Info.Metadata.GUID == "horse.coder.tools.scriptloader").FirstOrDefault();
+                if (scriptLoader != null)
+                {
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_golbalEnable, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_ignoreHair, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_ignoreSkin, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_alwaysCheck, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_tempCacheCapacity, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_mateCacheType, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_texCacheType, scriptLoader));
+                }
+            }
+            results = results.Concat(configs);
         }
     }
 }
