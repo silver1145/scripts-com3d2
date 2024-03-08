@@ -256,6 +256,25 @@ public static class NPRShaderAdd
         return false;
     }
 
+    public static bool IsInfinityColorSlot(string slotname)
+    {
+        slotname = slotname.ToLower();
+        return slotname.StartsWith("hair") || slotname == "head" || slotname == "body";
+    }
+
+    public static IEnumerable<CodeInstruction> FixLeaveTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.Start();
+        while (codeMatcher.IsValid)
+        {
+            codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Leave))
+                .Advance(1)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Nop));
+        }
+        return codeMatcher.InstructionEnumeration();
+    }
+
     [HarmonyPatch(typeof(Util), "LoadALLShaders")]
     [HarmonyPrefix]
     public static void LoadALLShadersPrefix()
@@ -313,16 +332,7 @@ public static class NPRShaderAdd
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> ReadMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
-        CodeMatcher codeMatcher = new CodeMatcher(instructions)
-            .End()
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Ldstr, "を開けませんでした") })
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Leave) })
-            .Advance(1)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Nop))
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Ldstr, "を開けませんでした") })
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Leave) })
-            .Advance(1)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Nop));
+        CodeMatcher codeMatcher = new CodeMatcher(FixLeaveTranspiler(instructions));
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldstr, "null")).Advance(-1);
         object endLabel = codeMatcher.InstructionAt(8).operand;
         codeMatcher.InsertAndAdvance(codeMatcher.Instruction)
@@ -351,16 +361,7 @@ public static class NPRShaderAdd
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> ReadMaterialWithSetShaderTranspiler(IEnumerable<CodeInstruction> instructions)
     {
-        CodeMatcher codeMatcher = new CodeMatcher(instructions)
-            .End()
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Ldstr, "を開けませんでした") })
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Leave) })
-            .Advance(1)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Nop))
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Ldstr, "を開けませんでした") })
-            .MatchBack(false, new[] { new CodeMatch(OpCodes.Leave) })
-            .Advance(1)
-            .InsertAndAdvance(new CodeInstruction(OpCodes.Nop));
+        CodeMatcher codeMatcher = new CodeMatcher(FixLeaveTranspiler(instructions));
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldstr, "null")).Advance(-1);
         object endLabel = codeMatcher.InstructionAt(8).operand;
         codeMatcher.InsertAndAdvance(codeMatcher.Instruction)
@@ -497,16 +498,24 @@ public static class NPRShaderAdd
 
     [HarmonyPatch(typeof(NPRShaderManaged), "ChangeNPRSMaterial")]
     [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> ChangeNPRSMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
+    public static IEnumerable<CodeInstruction> ChangeNPRSMaterialTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
-        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        CodeMatcher codeMatcher = new CodeMatcher(instructions, generator);
+        Label label;
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Brtrue))
             .InsertAndAdvance(codeMatcher.Instruction)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_3))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(IsSSMaterial))));
-        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj));
-        codeMatcher.RemoveInstruction()
-            .MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.PropertySetter(typeof(UnityEngine.Object), "name")))
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Newobj))
+            .RemoveInstruction();
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Blt))
+            .Advance(5)
+            .CreateLabel(out label)
+            .Advance(-4)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(IsInfinityColorSlot))))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Brtrue, label));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.PropertySetter(typeof(UnityEngine.Object), "name")))
             .RemoveInstructionsWithOffsets(1, 18);
         return codeMatcher.InstructionEnumeration();
     }
@@ -515,7 +524,7 @@ public static class NPRShaderAdd
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> UpdaateMaterialTranspiler(IEnumerable<CodeInstruction> instructions)
     {
-        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        CodeMatcher codeMatcher = new CodeMatcher(FixLeaveTranspiler(instructions));
         codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(string), "Contains")))
         .Advance(1)
             .Insert(new CodeInstruction(OpCodes.Or))
