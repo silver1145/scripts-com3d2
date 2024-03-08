@@ -245,11 +245,12 @@ Configuration `BepinEx/config/MateTexCache.cfg`:
 3. IgnoreHair: Not cache Materials and Textures on hair*
 4. LoadAlwaysCheck: Always check if resource has been modified (instead of only when marked dirty)
 5. UnityTempCacheCapacity: The size of the resource cache pool to be destroyed
-6. MateCacheType:
+6. UseSharedMaterialForcibly[Advanced]: Force to use `SkinnedMeshRenderer.sharedMaterial(s)` instead of `SkinnedMeshRenderer.material(s)`
+7. MateCacheType:
     * All: Cache all `*.mate`
     * NPR_Only: Only cache `*NPR*.mate`
     * None: No cache
-7. TexCacheType:
+8. TexCacheType:
     * All: Cache all `*.tex`
     * ByMate: cache based on MateCacheType and material
 

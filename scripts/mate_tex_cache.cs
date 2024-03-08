@@ -29,6 +29,7 @@ public static class MateTexCache
     static public ConfigEntry<bool> _ignoreHair = configFile.Bind("MateTexCache Setting", "IgnoreHair", true, "Ignore Hair");
     static public ConfigEntry<bool> _ignoreSkin = configFile.Bind("MateTexCache Setting", "IgnoreSkin", true, "Ignore Skin");
     static public ConfigEntry<bool> _alwaysCheck = configFile.Bind("MateTexCache Setting", "LoadAlwaysCheck", false, "Always Check");
+    static public ConfigEntry<bool> _forceSharedMaterial = configFile.Bind("MateTexCache Setting", "UseSharedMaterialForcibly", false, new ConfigDescription("Force Use Shared Material", null, new ConfigurationManagerAttributes { IsAdvanced = true}));
     static public ConfigEntry<int> _tempCacheCapacity = configFile.Bind("MateTexCache Setting", "UnityTempCacheCapacity", 10, new ConfigDescription("Capacity for Temp Cache (will Destroy)", new AcceptableValueRange<int>(0, 50)));
     static public ConfigEntry<string> _mateCacheType = configFile.Bind("MateTexCache Setting", "MateCacheType", "All", new ConfigDescription("MateCache Type", new AcceptableValueList<string>(MateCacheTypes.ToArray())));
     static public ConfigEntry<string> _texCacheType = configFile.Bind("MateTexCache Setting", "TexCacheType", "All", new ConfigDescription("TexCache Type", new AcceptableValueList<string>(TexCacheTypes.ToArray())));
@@ -36,9 +37,30 @@ public static class MateTexCache
     static bool ignoreHair = _ignoreHair.Value;
     static bool ignoreSkin = _ignoreSkin.Value;
     static bool alwaysCheck = _alwaysCheck.Value;
+    static bool forceSharedMaterial = _forceSharedMaterial.Value;
     static int tempCacheCapacity = _tempCacheCapacity.Value;
     static int mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
     static int texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
+    // config attribute
+    internal sealed class ConfigurationManagerAttributes
+    {
+        public bool? ShowRangeAsPercent;
+        public System.Action<BepInEx.Configuration.ConfigEntryBase> CustomDrawer;
+        public CustomHotkeyDrawerFunc CustomHotkeyDrawer;
+        public delegate void CustomHotkeyDrawerFunc(BepInEx.Configuration.ConfigEntryBase setting, ref bool isCurrentlyAcceptingInput);
+        public bool? Browsable;
+        public string Category;
+        public object DefaultValue;
+        public bool? HideDefaultButton;
+        public bool? HideSettingName;
+        public string Description;
+        public string DispName;
+        public int? Order;
+        public bool? ReadOnly;
+        public bool? IsAdvanced;
+        public System.Func<object, string> ObjToStr;
+        public System.Func<string, object> StrToObj;
+    }
     // cache
     static public UObjectCache<Material> mateCache;
     static public UObjectCache<Texture2D> texCache;
@@ -571,6 +593,7 @@ public static class MateTexCache
         _ignoreHair.SettingChanged += (s, e) => ignoreHair = _ignoreHair.Value;
         _ignoreSkin.SettingChanged += (s, e) => ignoreSkin = _ignoreSkin.Value;
         _alwaysCheck.SettingChanged += (s, e) => alwaysCheck = _alwaysCheck.Value;
+        _forceSharedMaterial.SettingChanged += (s, e) => forceSharedMaterial = _forceSharedMaterial.Value;
         _tempCacheCapacity.SettingChanged += (s, e) => tempCacheCapacity = _tempCacheCapacity.Value;
         _mateCacheType.SettingChanged += (s, e) => mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
         _texCacheType.SettingChanged += (s, e) => texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
@@ -596,7 +619,7 @@ public static class MateTexCache
     [HarmonyPrefix]
     public static bool RendererGetMaterial(ref Renderer __instance, ref Material __result)
     {
-        if (__instance is SkinnedMeshRenderer)
+        if (forceSharedMaterial && __instance is SkinnedMeshRenderer)
         {
             __result = __instance.sharedMaterial;
             return false;
@@ -608,7 +631,7 @@ public static class MateTexCache
     [HarmonyPrefix]
     public static bool RendererSetMaterial(ref Renderer __instance, Material value)
     {
-        if (__instance is SkinnedMeshRenderer)
+        if (forceSharedMaterial && __instance is SkinnedMeshRenderer)
         {
             __instance.sharedMaterial = value;
             return false;
@@ -620,7 +643,7 @@ public static class MateTexCache
     [HarmonyPrefix]
     public static bool RendererGetMaterials(ref Renderer __instance, ref Material[] __result)
     {
-        if (__instance is SkinnedMeshRenderer)
+        if (forceSharedMaterial && __instance is SkinnedMeshRenderer)
         {
             __result = __instance.sharedMaterials;
             return false;
@@ -632,7 +655,7 @@ public static class MateTexCache
     [HarmonyPrefix]
     public static bool RendererSetMaterials(ref Renderer __instance, Material[] value)
     {
-        if (__instance is SkinnedMeshRenderer)
+        if (forceSharedMaterial && __instance is SkinnedMeshRenderer)
         {
             __instance.sharedMaterials = value;
             return false;
@@ -1302,6 +1325,7 @@ public static class MateTexCache
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_ignoreHair, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_ignoreSkin, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_alwaysCheck, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_forceSharedMaterial, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_tempCacheCapacity, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_mateCacheType, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_texCacheType, scriptLoader));
