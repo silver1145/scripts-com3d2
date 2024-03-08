@@ -44,7 +44,7 @@ public static class ChangeTexFix
             {
                 foreach (var m in componentInChildren.sharedMaterials)
                 {
-                    Texture tex = m.GetTexture(prop_name);
+                    Texture tex = m?.GetTexture(prop_name);
                     if (tex != null)
                     {
                         file_name = Path.GetFileNameWithoutExtension(tex.name) + ".tex";

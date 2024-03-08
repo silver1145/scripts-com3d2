@@ -152,7 +152,7 @@ public static class InfinityColorFix
                     return;
                 }
                 Texture2D tex1 = ImportCM.CreateTexture(base_name);
-                Object.Destroy(baseTexDict[base_name]);
+                UnityEngine.Object.Destroy(baseTexDict[base_name]);
                 baseTexDict[base_name] = tex1;
                 _base_tex = tex1;
             }
@@ -165,7 +165,7 @@ public static class InfinityColorFix
                     return;
                 }
                 Texture2D tex2 = ImportCM.CreateTexture(mask_name);
-                Object.Destroy(maskTexDict[base_name]);
+                UnityEngine.Object.Destroy(maskTexDict[base_name]);
                 maskTexDict[base_name] = tex2;
                 mask_tex = tex2;
             }
@@ -190,7 +190,7 @@ public static class InfinityColorFix
             {
                 foreach (var m in componentInChildren.sharedMaterials)
                 {
-                    Texture tex = m.GetTexture(prop_name);
+                    Texture tex = m?.GetTexture(prop_name);
                     if (tex != null)
                     {
                         if (baseTexDict.ContainsKey(tex.name))
