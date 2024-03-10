@@ -42,6 +42,7 @@ public static class MateTexCache
     static int mateCacheType = MateCacheTypes.IndexOf(_mateCacheType.Value);
     static int texCacheType = TexCacheTypes.IndexOf(_texCacheType.Value);
     // config attribute
+    #pragma warning disable 0169, 0414, 0649
     internal sealed class ConfigurationManagerAttributes
     {
         public bool? ShowRangeAsPercent;
@@ -61,6 +62,7 @@ public static class MateTexCache
         public System.Func<object, string> ObjToStr;
         public System.Func<string, object> StrToObj;
     }
+    #pragma warning restore 0169, 0414, 0649
     // cache
     static public UObjectCache<Material> mateCache;
     static public UObjectCache<Texture2D> texCache;
