@@ -15,6 +15,9 @@ public static class VYM_Enhance
 {
     static Harmony instance;
     static Dictionary<int, MaidAheEye> maidsAheEye = new Dictionary<int, MaidAheEye>();
+    static bool externalSet = false;
+    static Maid currentMaid = null;
+    static float currentValue = 0f;
 
     public static void Main()
     {
@@ -210,7 +213,7 @@ public static class VYM_Enhance
                 Math.Min((maidState.fAheDefEyeR - 0f) / __instance.fEyePosToSliderMul, 0.0f),
                 maid.body0.trsEyeR.localPosition.z
             );
-            maidsAheEye.Add(maidID, new MaidAheEye(eyeLLocalPosition, eyeRLocalPosition, maid.body0.trsEyeL.localScale, maid.body0.trsEyeR.localScale));    
+            maidsAheEye.Add(maidID, new MaidAheEye(maid, eyeLLocalPosition, eyeRLocalPosition, maid.body0.trsEyeL.localScale, maid.body0.trsEyeR.localScale));    
         }
         if (maidState.orgasmCmb > 0)
         {
@@ -251,7 +254,7 @@ public static class VYM_Enhance
 
         if (maidState.aheValue < 0f) maidState.aheValue = 0f;
 
-        float v = maidsAheEye[maidID].getCurrentYFactor();
+        float v = maidsAheEye[maidID].getCurrentYFactor(maid);
         Vector2 VX = maidsAheEye[maidID].getCurrentX();
         Vector2 VY = maidsAheEye[maidID].getCurrentY(
             Math.Max(v * (maidState.fAheDefEyeL + maidState.aheValue) / __instance.fEyePosToSliderMul, 0f),
@@ -271,42 +274,50 @@ public static class VYM_Enhance
 
     public class MaidAheEye
     {
+        public Maid maid;
         public Vector3 l_v;
         public Vector3 r_v;
         public Vector3 scale_off_orgin_l;
         public Vector3 scale_off_orgin_r;
         private float factor_y;
-        private float scale = 1.0F;
+        private float scale = 1.0f;
         private bool circle_flag_factor = true;
         private bool circle_flag_scale = true;
         private bool scale_update_flag = false;
         static Dictionary<float, float> x_offset_map = new Dictionary<float, float> {
-            {0.0F, -0.06F}, {0.1F, -0.055F}, {0.2F, -0.05F}, {0.3F, -0.047F}, {0.4F, -0.044F}, {0.5F, -0.035F}, {0.6F, -0.03F}, {0.7F, -0.025F}, {0.8F, -0.02F}, {0.9F, -0.01F},
-            {1.0F, 0.0F}, {1.1F, 0.01F}, {1.2F, 0.02F}, {1.3F, 0.03F}, {1.4F, 0.035F}, {1.5F, 0.045F}, {1.6F, 0.05F}, {1.7F, 0.055F}, {1.8F, 0.062F}, {1.9F, 0.068F}, {2.0F, 0.075F}, {2.1F, 0.08F}
+            {0.0f, -0.06f}, {0.1f, -0.055f}, {0.2f, -0.05f}, {0.3f, -0.047f}, {0.4f, -0.044f}, {0.5f, -0.035f}, {0.6f, -0.03f}, {0.7f, -0.025f}, {0.8f, -0.02f}, {0.9f, -0.01f},
+            {1.0f, 0.0f}, {1.1f, 0.01f}, {1.2f, 0.02f}, {1.3f, 0.03f}, {1.4f, 0.035f}, {1.5f, 0.045f}, {1.6f, 0.05f}, {1.7f, 0.055f}, {1.8f, 0.062f}, {1.9f, 0.068f}, {2.0f, 0.075f}, {2.1f, 0.08f}
         };
 
-        public static float factor_start = 1.0F;
-        public static float factor_end = 1.0F;
-        public static float scale_start = 1.0F;
-        public static float scale_end = 1.0F;
-        public static float circle_time = 2.0F;
-        public static float off_x = 0.0F;
-        public static float off_z = 0.0F;
+        public static float factor_start = 1.0f;
+        public static float factor_end = 1.0f;
+        public static float scale_start = 1.0f;
+        public static float scale_end = 1.0f;
+        public static float circle_time = 2.0f;
+        public static float off_x = 0.0f;
+        public static float off_z = 0.0f;
 
-        public MaidAheEye(Vector3 lv, Vector3 rv, Vector3 origin_scale_l, Vector3 origin_scale_r)
+        public MaidAheEye(Maid m, Vector3 lv, Vector3 rv, Vector3 origin_scale_l, Vector3 origin_scale_r)
         {
+            maid = m;
             factor_y = factor_start;
             l_v = lv;
             r_v = rv;
-            scale_off_orgin_l = origin_scale_l - new Vector3(1.0F, 1.0F, 1.0F);
-            scale_off_orgin_r = origin_scale_r - new Vector3(1.0F, 1.0F, 1.0F);
+            scale_off_orgin_l = origin_scale_l - new Vector3(1.0f, 1.0f, 1.0f);
+            scale_off_orgin_r = origin_scale_r - new Vector3(1.0f, 1.0f, 1.0f);
         }
 
-        public float getCurrentYFactor()
+        public float getCurrentYFactor(Maid maid)
         {
-            if (factor_start == factor_end)
+            bool equalFlag = factor_start == factor_end;
+            bool externalFlag = externalSet && currentMaid == maid;
+            if (equalFlag)
             {
                 factor_y = factor_start;
+            }
+            else if (externalFlag)
+            {
+                factor_y = Mathf.Lerp(factor_start, factor_end, currentValue);
             }
             else
             {
@@ -329,9 +340,13 @@ public static class VYM_Enhance
                 }
             }
             
-            if (scale_start == scale_end)
+            if (equalFlag)
             {
                 scale = scale_start;
+            }
+            else if (externalFlag)
+            {
+                scale = Mathf.Lerp(scale_start, scale_end, currentValue);
             }
             else
             {
@@ -361,8 +376,8 @@ public static class VYM_Enhance
             {
                 return new Vector2(l_v.x + x_offset_map[scale] + off_x, r_v.x + x_offset_map[scale] + off_x);
             }
-            float floor =  (float) Math.Round(scale - 0.05F, 1);
-            float ceil = (float) Math.Round(scale + 0.05F, 1);
+            float floor =  (float) Math.Round(scale - 0.05f, 1);
+            float ceil = (float) Math.Round(scale + 0.05f, 1);
             if (x_offset_map.ContainsKey(floor) && x_offset_map.ContainsKey(ceil))
             {
                 float temp = x_offset_map[ceil] + (x_offset_map[ceil] - x_offset_map[floor]) * (scale - floor) * 10;
@@ -396,7 +411,7 @@ public static class VYM_Enhance
 
         public bool scaleNeedUpdated()
         {
-            if (scale_start != 1.0F || scale_end != 1.0F)
+            if (scale_start != 1.0f || scale_end != 1.0f)
             {
                 scale_update_flag = true;
                 return true;
