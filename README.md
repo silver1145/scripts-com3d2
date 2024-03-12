@@ -4,21 +4,21 @@ Some COM3D2 functional scripts
 
 ## Description
 
-| Script Name                    | Description                                      | Require                                                                |
-| ------------------------------ | ------------------------------------------------ | ---------------------------------------------------------------------- |
-| change_tex_fix                 | Fix TBody.ChangeTex when file does not exist     | -                                                                      |
-| dcm_sync_anm                   | DCM Sync With Item Anm and MovieTexture          | COM3D2.DanceCameraMotion.Plugin                                        |
-| extract_ks_scripts             | Extract *.ks scripts from game                   | -                                                                      |
-| infinity_color_fix             | Fix InfinityColor on Alpha Channel and Add Mask  | [*Optional*] COM3D2.MaidLoader                                         |
-| partsedit_add_bone             | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                                |
-| vym_syasei_sync_with_inoutanim | Vym Syasei Sync With Inoutanim                   | COM3D2.VibeYourMaid.Plugin<br>COM3D2.InOutAnimation.Plugin             |
-| wrap_mode_extend_sc            | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                             |
-| model_extend                   | Model Extend                                     | -                                                                      |
-| npr_addition                   | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                                |
-| vym_enhance                    | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                             |
-| mipmap_extend                  | Enable Mipmap for textures with `mipmap` in name | -                                                                      |
-| mate_tex_cache                 | Mate & Tex Cache                                 | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader |
-| ~~npr_930_dpi_fix~~            | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin(v930)                                          |
+| Script Name         | Description                                      | Require                                                                                                                                        |
+| ------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| change_tex_fix      | Fix TBody.ChangeTex when file does not exist     | -                                                                                                                                              |
+| dcm_sync_anm        | DCM Sync With Item Anm and MovieTexture          | COM3D2.DanceCameraMotion.Plugin                                                                                                                |
+| extract_ks_scripts  | Extract *.ks scripts from game                   | -                                                                                                                                              |
+| infinity_color_fix  | Fix InfinityColor on Alpha Channel and Add Mask  | [*Optional*] COM3D2.MaidLoader                                                                                                                 |
+| partsedit_add_bone  | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                                                                                                        |
+| inoutanim_sync      | InoutAnim Sync                                   | COM3D2.InOutAnimation.Plugin<br>[*Optional*] COM3D2.VibeYourMaid.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin<br>[*Optional*] vym_enhance |
+| wrap_mode_extend_sc | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                                                                                                     |
+| model_extend        | Model Extend                                     | -                                                                                                                                              |
+| npr_addition        | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                                                                                                        |
+| vym_enhance         | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                                                                                                     |
+| mipmap_extend       | Enable Mipmap for textures with `mipmap` in name | -                                                                                                                                              |
+| mate_tex_cache      | Mate & Tex Cache                                 | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader                                                                         |
+| ~~npr_930_dpi_fix~~ | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin(v930)                                                                                                                  |
 
 ## Install
 
@@ -57,9 +57,12 @@ If `COM3D2.MaidLoader` is installed, the infinity color Mask texture will also b
 
 Make Mune and Hip Bone Moveable and Scaleable for `COM3D2.PartsEdit.Plugin`.
 
-### vym_syasei_sync_with_inoutanim
+### inoutanim_sync
 
-Allow Vym Syasei to sync With Inoutanim.
+* Note: If vym_syasei_sync_with_inoutanim has been installed before, you need to delete `vym_syasei_sync_with_inoutanim.cs` in `game_root_directory/scripts/`.
+
+Allow InoutAnim to Sync with Vym Syasei, Vym_Enhance AheEyeAnim, SceneCapture Emission Anim.
+Only `COM3D2.InOutAnimation.Plugin` is a mandatory dependency. Others are optional.
 
 ### wrap_mode_extend_sc
 
