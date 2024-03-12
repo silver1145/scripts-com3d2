@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using COM3D2.InOutAnimation.Plugin;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 using System.Reflection.Emit;
@@ -17,8 +18,7 @@ public static class InoutAnimSync
 {
 
     static Harmony instance;
-    static Dictionary<Maid, bool> isSyasei = new Dictionary<Maid, bool>();
-    static bool isShooting = false;
+    static float shotReadyTime = 0f;
     static float rate;
     // Config
     static public bool bindConfig = false;
@@ -72,31 +72,32 @@ public static class InoutAnimSync
         return smoothedValue;
     }
 
-    [HarmonyPatch(typeof(InOutAnimation), "IsShooting")]
-    [HarmonyPostfix]
-    static void IsShootingPostfix(ref InOutAnimation __instance, ref bool __result)
+    public static bool IsShootReady()
     {
-        if (!__result)
-        {
-            if (isSyasei.TryGetValue(__instance.mediator.TargetMaid, out bool value))
-            {
-                isShooting = value;
-            }
-        }
-        else
-        {
-            isShooting = true;
-        }
+        return Time.time - shotReadyTime < 10.0f;
     }
 
-    [HarmonyPatch(typeof(InOutAnimation.FlipAnim), "GetCurrentTex")]
-    [HarmonyPostfix]
-    static void GetCurrentTexPostfix(ref InOutAnimation.FlipAnim __instance, ref Texture2D __result)
+    [HarmonyPatch(typeof(InOutAnimation.State), "shotReady", MethodType.Getter)]
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> shotReadyGetterTranspiler(IEnumerable<CodeInstruction> instructions)
     {
-        if (isShooting)
-        {
-            __result = !__instance.TextureLoadedEx ? Texture2D.blackTexture : __instance.texturesEx[Mathf.RoundToInt((__instance.texturesEx.Length - 1) * Mathf.InverseLerp(0, __instance.textures.Length - 1, __instance.CurrentFrame))];
-        }
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher
+            .MatchForward(false, new CodeMatch(OpCodes.Ret))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InoutAnimSync), nameof(IsShootReady))))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Or));
+        return codeMatcher.InstructionEnumeration();
+    }
+
+    [HarmonyPatch(typeof(InOutAnimation), "IsShooting")]
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> IsShootingTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(UnityEngine.Object), "name")))
+            .Advance(1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(string), "ToUpper", new Type[] { })));
+        return codeMatcher.InstructionEnumeration();
     }
 
     // Emission Anim
@@ -116,10 +117,9 @@ public static class InoutAnimSync
             }
             TryPatchSceneCapture.UpdateRate();
             TryPatchVYMEnhance.UpdateRate();
-            if (__instance.TargetMaid != curMaid)
+            if (__instance.TargetMaid != curMaid && TryPatchVYMEnhance.SetMaid(__instance.TargetMaid))
             {
                 curMaid = __instance.TargetMaid;
-                TryPatchVYMEnhance.UpdateMaid();
             }
         }
     }
@@ -184,6 +184,7 @@ public static class InoutAnimSync
             });
             bindConfig = true;
         }
+        TryPatchVYMEnhance.UpdateAheAnimState();
     }
 
     abstract class TryPatch
@@ -308,36 +309,18 @@ public static class InoutAnimSync
             {
                 return false;
             }
-            var syaseiCheck = AccessTools.Method(vibeYourMaid, "SyaseiCheck");
-            var syaseiCheckTranspiler = AccessTools.Method(typeof(TryPatchVibeYourMaid), "SyaseiCheckTranspiler");
-            harmony.Patch(syaseiCheck, transpiler: new HarmonyMethod(syaseiCheckTranspiler));
+            var manMotionChange = AccessTools.Method(vibeYourMaid, "ManMotionChange", new [] { typeof(string), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(float), typeof(float)});
+            var manMotionChangePostfix = AccessTools.Method(typeof(TryPatchVibeYourMaid), "ManMotionChangePostfix");
+            harmony.Patch(manMotionChange, postfix: new HarmonyMethod(manMotionChangePostfix));
             return true;
         }
 
-        public static void SetSyasei(bool result, Maid maid, float check)
+        public static void ManMotionChangePostfix(string motion)
         {
-            if (check == 85.0f)
+            if (motion.Contains("_shasei"))
             {
-                isSyasei[maid] = result;
+                shotReadyTime = Time.time;
             }
-        }
-
-        static IEnumerable<CodeInstruction> SyaseiCheckTranspiler(IEnumerable<CodeInstruction> instructions)
-        {
-            CodeMatcher codeMatcher = new CodeMatcher(instructions);
-            codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ret));
-            var loadMaid = codeMatcher.InstructionsWithOffsets(-25, -21);
-            codeMatcher.InsertAndAdvance(new CodeInstruction(OpCodes.Dup))
-                .InsertAndAdvance(loadMaid)
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_2))
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(TryPatchVibeYourMaid), "SetSyasei")))
-                .Advance(1)
-                .MatchForward(false, new CodeMatch(OpCodes.Ret))
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Dup))
-                .InsertAndAdvance(loadMaid)
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_2))
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(TryPatchVibeYourMaid), "SetSyasei")));
-            return codeMatcher.InstructionEnumeration();
         }
     }
 
@@ -350,8 +333,16 @@ public static class InoutAnimSync
 
         public override bool Patch()
         {
-            Type vymEnhance = AccessTools.TypeByName("VYM_Enhance");
-            if (vymEnhance != null)
+            Type vymEnhance = null;
+            foreach (var t in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName.StartsWith("Microsoft.VisualStudio") is false).SelectMany(a => a.GetTypes()).Reverse())
+            {
+                if (t?.FullName == "VYM_Enhance")
+                {
+                    vymEnhance = t;
+                    break;
+                }
+            }
+            if (vymEnhance == null)
             {
                 return false;
             }
@@ -368,19 +359,24 @@ public static class InoutAnimSync
             return true;
         }
 
+        public static void UpdateRate()
+        {
+            currentValue?.SetValue(null, rate);
+        }
+
         public static void UpdateAheAnimState()
         {
             externalSet?.SetValue(null, enableAheAnim);
         }
 
-        public static void UpdateMaid()
+        public static bool SetMaid(Maid maid)
         {
-            currentMaid?.SetValue(null, curMaid);
-        }
-
-        public static void UpdateRate()
-        {
-            currentValue?.SetValue(null, rate);
+            if (currentMaid != null)
+            {
+                currentMaid.SetValue(null, maid);
+                return true;
+            }
+            return false;
         }
     }
 }
