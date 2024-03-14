@@ -24,7 +24,7 @@ public static class ChangeTexFix
 
     [HarmonyPatch(typeof(TBody), "ChangeTex")]
     [HarmonyPrefix]
-    public static void ChangeTexPrefix(ref TBody __instance, string slotname, Dictionary<string, byte[]> dicModTexData, ref string filename, string prop_name)
+    public static void ChangeTexPrefix(ref TBody __instance, string slotname, int matno, Dictionary<string, byte[]> dicModTexData, ref string filename, string prop_name)
     {
         int num = (int)TBody.hashSlotName[slotname];
         TBodySkin tbodySkin = __instance.goSlot[num];
@@ -42,18 +42,15 @@ public static class ChangeTexFix
             SkinnedMeshRenderer componentInChildren = tbodySkin.obj.GetComponentInChildren<SkinnedMeshRenderer>();
             if (componentInChildren != null)
             {
-                foreach (var m in componentInChildren.sharedMaterials)
+                Texture tex = componentInChildren.sharedMaterials[matno]?.GetTexture(prop_name);
+                if (tex != null)
                 {
-                    Texture tex = m?.GetTexture(prop_name);
-                    if (tex != null)
+                    file_name = Path.GetFileNameWithoutExtension(tex.name) + ".tex";
+                    if (GameUty.FileSystem.IsExistentFile(file_name))
                     {
-                        file_name = Path.GetFileNameWithoutExtension(tex.name) + ".tex";
-                        if (GameUty.FileSystem.IsExistentFile(file_name))
-                        {
-                            filename = file_name;
-                        }
-                        return;
+                        filename = file_name;
                     }
+                    return;
                 }
             }
         }

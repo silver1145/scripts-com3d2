@@ -188,21 +188,19 @@ public static class InfinityColorFix
             SkinnedMeshRenderer componentInChildren = tbodySkin.obj.GetComponentInChildren<SkinnedMeshRenderer>();
             if (componentInChildren != null)
             {
-                foreach (var m in componentInChildren.sharedMaterials)
+                Material m = componentInChildren.sharedMaterials[matno];
+                Texture tex = m?.GetTexture(prop_name);
+                if (tex != null)
                 {
-                    Texture tex = m?.GetTexture(prop_name);
-                    if (tex != null)
+                    if (baseTexDict.ContainsKey(tex.name))
                     {
-                        if (baseTexDict.ContainsKey(tex.name))
-                        {
-                            materialToMask.Add(m);
-                            return;
-                        }
-                        if (materialToMask.Contains(m) && prop_name == "_ToonRamp" && GameUty.FileSystem.IsExistentFile(tex.name))
-                        {
-                            Texture2D tex2d = ImportCM.CreateTexture(tex.name);
-                            m.SetTexture(prop_name, tex2d);
-                        }
+                        materialToMask.Add(m);
+                        return;
+                    }
+                    if (materialToMask.Contains(m) && prop_name == "_ToonRamp" && GameUty.FileSystem.IsExistentFile(tex.name))
+                    {
+                        Texture2D tex2d = ImportCM.CreateTexture(tex.name);
+                        m.SetTexture(prop_name, tex2d);
                     }
                 }
             }
