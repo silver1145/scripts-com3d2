@@ -186,7 +186,7 @@ public static class InfinityColorFix
         if (tbodySkin.obj != null)
         {
             SkinnedMeshRenderer componentInChildren = tbodySkin.obj.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (componentInChildren != null)
+            if (componentInChildren != null && componentInChildren.sharedMaterials.Length > matno)
             {
                 Material m = componentInChildren.sharedMaterials[matno];
                 Texture tex = m?.GetTexture(prop_name);

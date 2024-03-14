@@ -14,6 +14,7 @@ using System.Reflection;
 using BepInEx.Configuration;
 using System.Reflection.Emit;
 
+#pragma warning disable 0414
 public static class InoutAnimSync
 {
     static Harmony instance;

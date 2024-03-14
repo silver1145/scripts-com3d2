@@ -609,6 +609,15 @@ public static class MateTexCache
         mateCache = null;
         texCache = null;
         texTempManage = null;
+        configFile = null;
+        _golbalEnable = null;
+        _ignoreHair = null;
+        _ignoreSkin = null;
+        _alwaysCheck = null;
+        _forceSharedMaterial = null;
+        _tempCacheCapacity = null;
+        _mateCacheType = null;
+        _texCacheType = null;
     }
 
     public static void RefreshCoPrefix()

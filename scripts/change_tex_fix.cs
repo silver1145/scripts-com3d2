@@ -40,7 +40,7 @@ public static class ChangeTexFix
         if (tbodySkin.obj != null)
         {
             SkinnedMeshRenderer componentInChildren = tbodySkin.obj.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (componentInChildren != null)
+            if (componentInChildren != null && componentInChildren.sharedMaterials.Length > matno)
             {
                 Texture tex = componentInChildren.sharedMaterials[matno]?.GetTexture(prop_name);
                 if (tex != null)
