@@ -562,7 +562,7 @@ public static class MateTexCache
 
     public static void Unload()
     {
-        instance.UnpatchAll(instance.Id);
+        instance.UnpatchSelf();
         instance = null;
         UnInit();
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= PatchWhenSceneLoaded;

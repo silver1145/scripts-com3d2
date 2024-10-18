@@ -31,7 +31,7 @@ public static class InfinityColorFix
 
     public static void Unload()
     {
-        instance.UnpatchAll(instance.Id);
+        instance.UnpatchSelf();
         instance = null;
         // GameUty.m_matSystem[(int)GameUty.SystemMaterial.InfinityColor] = null;
         GameUty.m_matSystem[(int)GameUty.SystemMaterial.TexTo8bitTex] = null;

@@ -37,7 +37,7 @@ public static class PartsEditAddBone
 
     public static void Unload()
     {
-        instance.UnpatchAll(instance.Id);
+        instance.UnpatchSelf();
         instance = null;
     }
 

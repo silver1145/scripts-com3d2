@@ -43,7 +43,7 @@ public static class DCMSyncAnm
 
     public static void Unload()
     {
-        instance.UnpatchAll(instance.Id);
+        instance.UnpatchSelf();
         instance = null;
         animInfos.Clear();
         animInfos = null;

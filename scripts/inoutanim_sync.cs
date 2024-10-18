@@ -78,7 +78,7 @@ public static class InoutAnimSync
 
     public static void Unload()
     {
-        instance.UnpatchAll(instance.Id);
+        instance.UnpatchSelf();
         instance = null;
         curMaid = null;
         rateBuffer = null;

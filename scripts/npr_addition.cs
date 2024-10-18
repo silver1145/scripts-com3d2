@@ -37,7 +37,7 @@ public static class NPRShaderAdd
 
     public static void Unload()
     {
-        instance.UnpatchAll(instance.Id);
+        instance.UnpatchSelf();
         instance = null;
         _BASEFRPROP = null;
         _BASECOLORPROP = null;
@@ -262,6 +262,15 @@ public static class NPRShaderAdd
         return slotname.StartsWith("hair") || slotname == "head" || slotname == "body";
     }
 
+    public static string GetFileName(string filePath)
+    {
+        if (filePath != null)
+        {
+            return Path.GetFileName(filePath);
+        }
+        return null;
+    }
+
     public static IEnumerable<CodeInstruction> FixLeaveTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher codeMatcher = new CodeMatcher(instructions);
@@ -383,6 +392,26 @@ public static class NPRShaderAdd
             .InsertAndAdvance(new CodeInstruction(codeMatcher.InstructionAt(4)))
             .InsertAndAdvance(new CodeInstruction(OpCodes.Call, typeof(NPRShaderAdd).GetMethod(nameof(IsKeyword))))
             .InsertAndAdvance(new CodeInstruction(OpCodes.And));
+        return codeMatcher.InstructionEnumeration();
+    }
+
+    [HarmonyPatch(typeof(NPRShader), "ReadMaterial")]
+    [HarmonyPatch(typeof(AssetLoader), "ReadMaterial")]
+    [HarmonyPatch(typeof(AssetLoader), "ReadMaterialWithSetShader")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> ReadMaterialPmatFix(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(FixLeaveTranspiler(instructions));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(GameUty), "FileOpen"))).Advance(-1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(GetFileName))));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(AFileBase), "IsValid")))
+            .InsertAndAdvance(codeMatcher.InstructionAt(-1))
+            .InsertAndAdvance(codeMatcher.InstructionAt(1));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(GameUty), "FileOpen"))).Advance(-1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NPRShaderAdd), nameof(GetFileName))));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(AFileBase), "IsValid")))
+            .InsertAndAdvance(codeMatcher.InstructionAt(-1))
+            .InsertAndAdvance(codeMatcher.InstructionAt(1));
         return codeMatcher.InstructionEnumeration();
     }
 
@@ -878,7 +907,7 @@ public static class NPRShaderAdd
 
         public override bool Patch()
         {
-            var transpiler = SymbolExtensions.GetMethodInfo((IEnumerable<CodeInstruction> instructions) => ReadMaterialTranspiler(instructions));
+            var transpiler = AccessTools.Method(typeof(TryPatchSetTexture), nameof(ReadMaterialTranspiler));
             Type t = AccessTools.TypeByName("COM3D2.MovieTexture.Plugin.MovieTexturePatcher");
             if (t != null)
             {
@@ -888,9 +917,11 @@ public static class NPRShaderAdd
             else
             {
                 MethodInfo targetMethod1 = AccessTools.Method(typeof(NPRShader), "ReadMaterial");
-                MethodInfo targetMethod2 = AccessTools.Method(typeof(AssetLoader), "ReadMaterialWithSetShader");
+                MethodInfo targetMethod2 = AccessTools.Method(typeof(AssetLoader), "ReadMaterial");
+                MethodInfo targetMethod3 = AccessTools.Method(typeof(AssetLoader), "ReadMaterialWithSetShader");
                 harmony.Patch(targetMethod1, transpiler: new HarmonyMethod(transpiler));
                 harmony.Patch(targetMethod2, transpiler: new HarmonyMethod(transpiler));
+                harmony.Patch(targetMethod3, transpiler: new HarmonyMethod(transpiler));
             }
             return true;
         }

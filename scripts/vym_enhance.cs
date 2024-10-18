@@ -26,7 +26,7 @@ public static class VYM_Enhance
 
     public static void Unload()
     {
-        instance.UnpatchAll(instance.Id);
+        instance.UnpatchSelf();
         instance = null;
     }
 
