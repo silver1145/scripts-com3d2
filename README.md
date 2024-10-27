@@ -4,46 +4,50 @@ Some COM3D2 functional scripts
 
 ## Description
 
-| Script Name         | Description                                      | Require                                                                                                                                        |
-| ------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| change_tex_fix      | Fix TBody.ChangeTex when file does not exist     | -                                                                                                                                              |
-| dcm_sync_anm        | DCM Sync With Item Anm and MovieTexture          | COM3D2.DanceCameraMotion.Plugin                                                                                                                |
-| extract_ks_scripts  | Extract *.ks scripts from game                   | -                                                                                                                                              |
-| infinity_color_fix  | Fix InfinityColor on Alpha Channel and Add Mask  | [*Optional*] COM3D2.MaidLoader                                                                                                                 |
-| partsedit_add_bone  | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                                                                                                        |
-| inoutanim_sync      | InoutAnim Sync                                   | COM3D2.InOutAnimation.Plugin<br>[*Optional*] COM3D2.VibeYourMaid.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin<br>[*Optional*] vym_enhance |
-| wrap_mode_extend_sc | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                                                                                                     |
-| model_extend        | Model Extend                                     | -                                                                                                                                              |
-| npr_addition        | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                                                                                                        |
-| vym_enhance         | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                                                                                                     |
-| mipmap_extend       | Enable Mipmap for textures with `mipmap` in name | -                                                                                                                                              |
-| mate_tex_cache      | Mate & Tex Cache                                 | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader                                                                         |
-| ~~npr_930_dpi_fix~~ | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin(v930)                                                                                                                  |
+| Script Name                                 | Description                                      | Require                                                                                                                                        |
+| ------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| [change_tex_fix](#change_tex_fix)           | Fix TBody.ChangeTex when file does not exist     | -                                                                                                                                              |
+| [dcm_sync_anm](#dcm_sync_anm)               | DCM Sync With Item Anm and MovieTexture          | COM3D2.DanceCameraMotion.Plugin                                                                                                                |
+| [extract_ks_scripts](#extract_ks_scripts)   | Extract *.ks scripts from game                   | -                                                                                                                                              |
+| [infinity_color_fix](#infinity_color_fix)   | Fix InfinityColor on Alpha Channel and Add Mask  | [*Optional*] COM3D2.MaidLoader                                                                                                                 |
+| [partsedit_add_bone](#partsedit_add_bone)   | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                                                                                                        |
+| [inoutanim_sync](#inoutanim_sync)           | InoutAnim Sync                                   | COM3D2.InOutAnimation.Plugin<br>[*Optional*] COM3D2.VibeYourMaid.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin<br>[*Optional*] vym_enhance |
+| [wrap_mode_extend_sc](#wrap_mode_extend_sc) | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                                                                                                     |
+| [model_extend](#model_extend)               | Model Extend                                     | -                                                                                                                                              |
+| [npr_addition](#npr_addition)               | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                                                                                                        |
+| [pmat_extend](#pmat_extend)                 | Allow Mate set RenderQueue (pmat)                | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin                                                                |
+| [vym_enhance](#vym_enhance)                 | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                                                                                                     |
+| [mipmap_extend](#mipmap_extend)             | Enable Mipmap for textures with `mipmap` in name | -                                                                                                                                              |
+| [mate_tex_cache](#mate_tex_cache)           | Mate & Tex Cache                                 | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader                                                                         |
+| [~~npr_930_dpi_fix~~](#npr_930_dpi_fix)     | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin(v930)                                                                                                                  |
 
 ## Install
 
-Download {script_name}.cs under `scripts/` as needed, and move it to the `game_root_directory/scripts/`.
+Download {script_name}.cs under `scripts/` as needed, and move it to `game_root_directory/scripts/`.
 Some scripts need additional steps according to the `Note` section.
+For old `BepInEx.ScriptLoader` (<=1.2.4.0), you need to replace `UnpatchSelf()` with `UnpatchAll(instance.Id)` in scripts.
 
-### change_tex_fix
+## Details
+
+### [change_tex_fix](./scripts/change_tex_fix.cs)
 
 Some mod textures do not follow the naming rules, such as `test_hair.tex`, this script is designed to load these textures and handle infinity colors normally, and it is recommended to install COM3D2.ExtendedErrorHandling.
 
 Previously, these textures could only be loaded through `COM3D2.StopQuitting.Plugin`(without `COM3D2.ExtendedErrorHandling`), which interrupted the entire loading process by raising an exception, and the infinity color was not handled.
 
-### dcm_sync_anm
+### [dcm_sync_anm](./scripts/dcm_sync_anm.cs)
 
 When clicking the play button of `COM3D2.DanceCameraMotion.Plugin`, the item anm will be synchronized when DCM Play/Pause/Seek. If `COM3D2.MovieTexture.Plugin` is installed, the texture will also be synchronized.
 Also added the DCM play shortcut key "`".
 
-### extract_ks_scripts
+### [extract_ks_scripts](./scripts/extract_ks_scripts.cs)
 
 Extract *.ks scripts for other purposes.
 Press the E key on the main interface to start extracting.
 
-### infinity_color_fix
+### [infinity_color_fix](./scripts/infinity_color_fix.cs)
 
-* Note: Download `resources/InfinityColor_Fix` folder and move to `game_root_directory/BepinEx/config/`
+* **Note**: Download `resources/InfinityColor_Fix` folder and move to `game_root_directory/BepinEx/config/`
 
 Allow infinity colors to handle transparent channels.
 
@@ -53,25 +57,25 @@ The grayscale [0-1] in the Mask texture determines whether the infinity color is
 
 If `COM3D2.MaidLoader` is installed, the infinity color Mask texture will also be refreshed when the Mod Refresh button is clicked.
 
-### partsedit_add_bone
+### [partsedit_add_bone](./scripts/partsedit_add_bone.cs)
 
 Make Mune and Hip Bone Moveable and Scaleable for `COM3D2.PartsEdit.Plugin`.
 
-### inoutanim_sync
+### [inoutanim_sync](./scripts/inoutanim_sync.cs)
 
-* Note: If vym_syasei_sync_with_inoutanim has been installed before, you need to delete `vym_syasei_sync_with_inoutanim.cs` in `game_root_directory/scripts/`.
+* **Note**: If vym_syasei_sync_with_inoutanim has been installed before, you need to delete `vym_syasei_sync_with_inoutanim.cs` in `game_root_directory/scripts/`.
 
 Allow InoutAnim to Sync with Vym Syasei, Vym_Enhance AheEyeAnim, SceneCapture Emission Anim.
 Only `COM3D2.InOutAnimation.Plugin` is a mandatory dependency. Others are optional.
 
-### wrap_mode_extend_sc
+### [wrap_mode_extend_sc](./scripts/wrap_mode_extend_sc.cs)
 
 Make textures repeated for SceneCapture.
 Copy from `wrap_mode_extend` (by ghorsington).
 
-### model_extend
+### [model_extend](./scripts/model_extend.cs)
 
-* Note: If slot_change has been installed before, you need to delete `slot_change.cs` in `game_root_directory/scripts/`.
+* **Note**: If slot_change has been installed before, you need to delete `slot_change.cs` in `game_root_directory/scripts/`.
 
 Load the extended configs (basebone/shadow).  
 Automatically set BaseBoneName to `_ROOT_` when loading `*.bodybone.model` [legacy feature]
@@ -104,6 +108,7 @@ Description:
 
 <details>
 <summary>Exporting Script for Blender</summary>
+Select object and run:
 
 ```python
 import bpy
@@ -220,24 +225,100 @@ for obj in selected_objects:
 | HandItemL     | _IK_handL     |
 | underhair     | \_ROOT\_      |
 | moza          | \_ROOT\_      |
+
 </details>
 
 ### npr_addition
 
-* Note: Download `resources/NPRShader` folder and move to `game_root_directory/Sybaris/UnityInjector/Config`
+* **Note**: Choose one of the following installations depending on the plugin you are using.
 
-Add Shader to `COM3D2.NPRShader.Plugin`.
+  1. For `COM3D2.ShaderServant`:
+     * Download all files in `resources/NPRShader/Shader` and move them to `game_root_directory/ShaderServantPacks`
+
+  2. For `COM3D2.NPRShader.Plugin`:
+     * Download [npr_addition.cs](./scripts/npr_addition.cs) to `game_root_directory/scripts/`
+     * Download `resources/NPRShader` folder and move it to `game_root_directory/Sybaris/UnityInjector/Config`
+
+Add Shader to COM3D2.
 [Shader Description](./resources/NPRShader/ShaderList.md)
 
-### vym_enhance
+<details>
+<summary>Transparent material debris Fix Script for Blender (Remember to back up project)</summary>
+Select object and run:
+
+```python
+import bpy
+import bmesh
+from collections import deque
+
+def reorder_faces(obj):
+    if bpy.context.object.mode != 'OBJECT':
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+    mesh = obj.data
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    index = 0
+    indexs = [0] * len(bm.faces)
+    
+    edge_to_faces = {}
+    for face in mesh.polygons:
+        for edge in face.edge_keys:
+            if edge not in edge_to_faces:
+                edge_to_faces[edge] = []
+            edge_to_faces[edge].append(face)
+
+    visited_faces = set()
+    visited_edges = set()
+    queue = deque()
+
+    def start_new_component(face):
+        for edge in face.edge_keys:
+            if edge not in visited_edges:
+                queue.append(edge)
+                visited_edges.add(edge)
+
+    for face in mesh.polygons:
+        if face not in visited_faces:
+            start_new_component(face)
+            while queue:
+                edge = queue.popleft()
+                if edge in edge_to_faces:
+                    faces = edge_to_faces[edge]
+                    for face in faces:
+                        if face not in visited_faces:
+                            visited_faces.add(face)
+                            indexs[face.index] = index
+                            index += 1
+                            for edge in face.edge_keys:
+                                if edge not in visited_edges:
+                                    queue.append(edge)
+                                    visited_edges.add(edge)
+    
+    for i, f in enumerate(bm.faces):
+        f.index = indexs[i]
+    bm.faces.sort()
+    bm.to_mesh(mesh)
+    bm.free()
+
+reorder_faces(bpy.context.object)
+```
+
+</details>
+
+### [pmat_extend](./scripts/pmat_extend.cs)
+
+Allow setting RenderQueue [-1..5000] (-1 to use render queue from shader) ​​directly in pmat column in mate.
+
+### [vym_enhance](./scripts/vym_enhance.cs)
 
 `COM3D2.VibeYourMaid.Plugin` function enhance & potential error fix.
 
-### mipmap_extend
+### [mipmap_extend](./scripts/mipmap_extend.cs)
 
 All texture with `mipmap` in the name will enable Mipmap.
 
-### mate_tex_cache
+### [mate_tex_cache](./scripts/mate_tex_cache.cs)
 
 Cache textures and materials for COM3D2 and NPRShader.
 
