@@ -1,6 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-resources/Shaders/* binary
+resources/ShaderPack/MaterialEditorDefinitions/*.xml text=auto eol=lf
 
 # Custom for Visual Studio
 *.cs     diff=csharp
