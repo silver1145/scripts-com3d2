@@ -1,9 +1,8 @@
 from pathlib import Path
+
+from me_def import Float, ShaderCollection, ShaderDefinitions, Texture, Vector
 from pydantic import TypeAdapter
-
-from shader_def import ShaderPropCollection, FloatProp, TexProp, ColorProp, VectorProp, KeywordProp
-from me_def import ShaderCollection, ShaderDefinitions, Texture, Vector, Float, Keyword
-
+from shader_def import ColorProp, FloatProp, KeywordProp, ShaderPropCollection, TexProp, VectorProp
 
 input_path = Path.cwd() / "tools" / "defs"
 output_path = Path.cwd() / "resources" / "ShaderPack" / "MaterialEditorDefinitions"
