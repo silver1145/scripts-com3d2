@@ -24,7 +24,9 @@ Some COM3D2 functional scripts
 ## Install
 
 Download {script_name}.cs under `scripts/` as needed, and move it to `game_root_directory/scripts/`.
+
 Some scripts need additional steps according to the `Note` section.
+
 For old `BepInEx.ScriptLoader` (<=1.2.4.0), you need to replace `UnpatchSelf()` with `UnpatchAll(instance.Id)` in scripts.
 
 ## Details
@@ -233,11 +235,12 @@ for obj in selected_objects:
 * **Note**: Choose one of the following installations depending on the plugin you are using.
 
   1. For `COM3D2.ShaderServant`:
-     * Download all files in `resources/NPRShader/Shader` and move them to `game_root_directory/ShaderServantPacks`
+     * Download all files in `resources/ShaderPack/Shaders` and move them to `game_root_directory/ShaderServantPacks`
+     * [Optional] For `COM3D2.MaterialEditor`: Download all files in `resources/ShaderPack/MaterialEditorDefinitions` and move them to `game_root_directory/MaterialEditorDefinitions`
 
   2. For `COM3D2.NPRShader.Plugin`:
      * Download [npr_addition.cs](./scripts/npr_addition.cs) to `game_root_directory/scripts/`
-     * Download `resources/NPRShader` folder and move it to `game_root_directory/Sybaris/UnityInjector/Config`
+     * Download `resources/ShaderPack/Shaders` and `resources/ShaderPack/ShadersProperties` folder and move them to `game_root_directory/Sybaris/UnityInjector/Config/NPRShader`
 
 Add Shader to COM3D2.
 [Shader Description](./resources/NPRShader/ShaderList.md)
