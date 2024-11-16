@@ -1,0 +1,26 @@
+{
+    "BASEFRPROP": [
+        "_Distortion",
+        "_Specular",
+        "_Gloss",
+        "_Matcap_Scale",
+        "_Matcap_Strength",
+        "_Matcap_Emission_Bottom",
+        "_TextureOpacity",
+        "_Exposure",
+        "_NormalIntensity"
+    ],
+    "BASECOLORPROP": [
+        "_Albedo_Base_Color",
+        "_Glass_Color",
+        "_Incident_Color",
+        "_Reflection_Color",
+        "_Emission_Base_Color",
+        "_Color"
+    ],
+    "VECTORPROP": [],
+    "TOGGLEPROP": [
+        "_Use_Distortion",
+        "_MatcapStyle"
+    ]
+}

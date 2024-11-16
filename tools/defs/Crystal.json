@@ -1,0 +1,210 @@
+[
+    {
+        "name": "Crystal Shader",
+        "props": [
+            {
+                "type": "tex",
+                "name": "_BaseColortex",
+                "tip": "Base Color tex",
+                "tex_type": "2D"
+            },
+            {
+                "type": "color",
+                "name": "_BasaColor",
+                "tip": "Basa Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_SurfaceClolrtex",
+                "tip": "Surface Clolr tex",
+                "tex_type": "2D"
+            },
+            {
+                "type": "color",
+                "name": "_SurfaceClolr",
+                "tip": "Surface Clolr",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Normal",
+                "tip": "Normal",
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_alpha",
+                "tip": "alpha",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Metallic",
+                "tip": "Metallic",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Gloss",
+                "tip": "Gloss",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.9,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Repetition",
+                "tip": "Repetition",
+                "min": 1.0,
+                "max": 20.0,
+                "default": 10.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ColorLoop",
+                "tip": "ColorLoop",
+                "min": 1.0,
+                "max": 5.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Width",
+                "tip": "Width",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ColoeLevel",
+                "tip": "Coloe Level",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_PasutelColor",
+                "tip": "Pasutel Color",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.3,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Distortion",
+                "tip": "Distortion",
+                "min": 0.0,
+                "max": 10.0,
+                "default": 5.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ChromaticAberration",
+                "tip": "Chromatic Aberration",
+                "min": -1.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LightCompletion",
+                "tip": "Light Completion",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Cutoff",
+                "tip": "Alpha cutoff",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_COMBINED",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_SEPARATE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_ON",
+                "tip": null
+            }
+        ]
+    }
+]

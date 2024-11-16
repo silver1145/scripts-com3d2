@@ -1,0 +1,2107 @@
+[
+    {
+        "name": "Hologram/Hologram_Unlit",
+        "props": [
+            {
+                "type": "color",
+                "name": "_MainColor",
+                "tip": "Main Color",
+                "is_hdr": true
+            },
+            {
+                "type": "tex",
+                "name": "_Line1",
+                "tip": "Line 1",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Line1Speed",
+                "tip": "Line 1 Speed",
+                "min": null,
+                "max": null,
+                "default": -3.57,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1Frequency",
+                "tip": "Line 1 Frequency",
+                "min": null,
+                "max": null,
+                "default": 100.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1Hardness",
+                "tip": "Line 1 Hardness",
+                "min": null,
+                "max": null,
+                "default": 1.45,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1InvertedThickness",
+                "tip": "Line 1 Inverted Thickness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1Alpha",
+                "tip": "Line 1 Alpha",
+                "min": null,
+                "max": null,
+                "default": 0.15,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Line2",
+                "tip": "Line 2",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Line2Speed",
+                "tip": "Line 2 Speed",
+                "min": null,
+                "max": null,
+                "default": -1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Frequency",
+                "tip": "Line 2 Frequency",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Hardness",
+                "tip": "Line 2 Hardness",
+                "min": null,
+                "max": null,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2InvertedThickness",
+                "tip": "Line 2 Inverted Thickness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.255,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Alpha",
+                "tip": "Line 2 Alpha",
+                "min": null,
+                "max": null,
+                "default": 0.1,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_LineGlitch",
+                "tip": "Line Glitch",
+                "tex_type": "2D"
+            },
+            {
+                "type": "vector",
+                "name": "_LineGlitchOffset",
+                "tip": "Line Glitch Offset"
+            },
+            {
+                "type": "vector",
+                "name": "_RandomGlitchOffset",
+                "tip": "Random Glitch Offset"
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchAmount",
+                "tip": "Random Glitch Amount",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.089,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ColorGlitchAffect",
+                "tip": "Color Glitch Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchSpeed",
+                "tip": "Line Glitch Speed",
+                "min": null,
+                "max": null,
+                "default": -0.26,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchFrequency",
+                "tip": "Line Glitch Frequency",
+                "min": null,
+                "max": null,
+                "default": 0.2,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchHardness",
+                "tip": "Line Glitch Hardness",
+                "min": null,
+                "max": null,
+                "default": 5.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchInvertedThickness",
+                "tip": "Line Glitch Inverted Thickness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.825,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelScale",
+                "tip": "Fresnel Scale",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelPower",
+                "tip": "Fresnel Power",
+                "min": null,
+                "max": null,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelAlphaScale",
+                "tip": "Fresnel Alpha Scale",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelAlphaPower",
+                "tip": "Fresnel Alpha Power",
+                "min": null,
+                "max": null,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "NormalMap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_NormalScale",
+                "tip": "NormalScale",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Distance",
+                "tip": "Soft Intersection 2 Distance",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Distance",
+                "tip": "Soft Intersection 1 Distance",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_NormalAffect",
+                "tip": "NormalAffect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_MaskCenter",
+                "tip": "Mask Center"
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Intensity",
+                "tip": "Soft Intersection 2 Intensity",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Affect",
+                "tip": "Soft Intersection 2 Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Intensity",
+                "tip": "Soft Intersection 1 Intensity",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Affect",
+                "tip": "Soft Intersection 1 Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_MaskSize",
+                "tip": "Mask Size"
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchConstant",
+                "tip": "Random Glitch Constant",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_DissolveScale",
+                "tip": "Dissolve Scale"
+            },
+            {
+                "type": "vector",
+                "name": "_GrainScale",
+                "tip": "Grain Scale"
+            },
+            {
+                "type": "float",
+                "name": "_GrainAffect",
+                "tip": "Grain Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ColorGlitchFeature",
+                "tip": "Color Glitch Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_GrainFeature",
+                "tip": "Grain Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_GrainValues",
+                "tip": "Grain Values"
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchTiling",
+                "tip": "Random Glitch Tiling",
+                "min": null,
+                "max": null,
+                "default": 2.83,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskFalloff",
+                "tip": "Mask Falloff",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Feature",
+                "tip": "Line 2 Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelFeature",
+                "tip": "Fresnel Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchFeature",
+                "tip": "Line Glitch Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchFeature",
+                "tip": "Random Glitch Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Feature",
+                "tip": "Soft Intersection 2 Feature",
+                "min": 0,
+                "max": 2,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "Off"
+                    ],
+                    [
+                        1,
+                        "Alpha"
+                    ],
+                    [
+                        2,
+                        "Color"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Feature",
+                "tip": "Soft Intersection 1 Feature",
+                "min": 0,
+                "max": 2,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "Off"
+                    ],
+                    [
+                        1,
+                        "Alpha"
+                    ],
+                    [
+                        2,
+                        "Color"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_Line1Feature",
+                "tip": "Line 1 Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineBothFeature",
+                "tip": "Line Both Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_DissolveHide",
+                "tip": "Dissolve Hide",
+                "min": -1.0,
+                "max": 1.0,
+                "default": -1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_DissolveFeature",
+                "tip": "Dissolve Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskFeature",
+                "tip": "Mask Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_NormalMapFeature",
+                "tip": "Normal Map Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_PositionFeature",
+                "tip": "Position Feature",
+                "min": 0,
+                "max": 2,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "X"
+                    ],
+                    [
+                        1,
+                        "Y"
+                    ],
+                    [
+                        2,
+                        "Z"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_PositionSpaceFeature",
+                "tip": "Position Space Feature",
+                "min": 0,
+                "max": 2,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "World"
+                    ],
+                    [
+                        1,
+                        "Local"
+                    ],
+                    [
+                        2,
+                        "Custom"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_PositionDirection",
+                "tip": "Position Direction",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RandomOffset",
+                "tip": "Random Offset",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_AlphaMask",
+                "tip": "Alpha Mask",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_AlphaMaskAffect",
+                "tip": "Alpha Mask Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_AlphaMaskFeature",
+                "tip": "Alpha Mask Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ZWrite",
+                "tip": "ZWrite",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_CullMode",
+                "tip": "Cull Mode",
+                "min": 0,
+                "max": 2,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "Off"
+                    ],
+                    [
+                        1,
+                        "Front"
+                    ],
+                    [
+                        2,
+                        "Back"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_MaskLocalFeature",
+                "tip": "Mask Local Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskInversion",
+                "tip": "Mask Inversion",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Voxelization",
+                "tip": "Voxelization",
+                "min": null,
+                "max": null,
+                "default": 100.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_VoxelizationAffect",
+                "tip": "Voxelization Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_VoxelizationFeature",
+                "tip": "Voxelization Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Alpha",
+                "tip": "Alpha",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_texcoord",
+                "tip": null,
+                "tex_type": "2D"
+            },
+            {
+                "type": "keyword",
+                "name": "_VOXELIZATIONFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINEGLITCHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONSPACEFEATURE_WORLD",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONSPACEFEATURE_LOCAL",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONSPACEFEATURE_CUSTOM",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONFEATURE_X",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONFEATURE_Y",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONFEATURE_Z",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_RANDOMGLITCHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_COLORGLITCHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_FRESNELFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_NORMALMAPFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINEBOTHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINE2FEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINE1FEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION1FEATURE_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION1FEATURE_ALPHA",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION1FEATURE_COLOR",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_GRAINFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION2FEATURE_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION2FEATURE_ALPHA",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION2FEATURE_COLOR",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_DISSOLVEFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_MASKFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_MASKLOCALFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_ALPHAMASKFEATURE_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "Hologram/Hologram_Unlit_Depth_Mask",
+        "props": [
+            {
+                "type": "color",
+                "name": "_MainColor",
+                "tip": "Main Color",
+                "is_hdr": true
+            },
+            {
+                "type": "tex",
+                "name": "_Line1",
+                "tip": "Line 1",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Line1Speed",
+                "tip": "Line 1 Speed",
+                "min": null,
+                "max": null,
+                "default": -3.57,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1Frequency",
+                "tip": "Line 1 Frequency",
+                "min": null,
+                "max": null,
+                "default": 100.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1Hardness",
+                "tip": "Line 1 Hardness",
+                "min": null,
+                "max": null,
+                "default": 1.45,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1InvertedThickness",
+                "tip": "Line 1 Inverted Thickness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line1Alpha",
+                "tip": "Line 1 Alpha",
+                "min": null,
+                "max": null,
+                "default": 0.15,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Line2",
+                "tip": "Line 2",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Line2Speed",
+                "tip": "Line 2 Speed",
+                "min": null,
+                "max": null,
+                "default": -1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Frequency",
+                "tip": "Line 2 Frequency",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Hardness",
+                "tip": "Line 2 Hardness",
+                "min": null,
+                "max": null,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2InvertedThickness",
+                "tip": "Line 2 Inverted Thickness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.255,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Alpha",
+                "tip": "Line 2 Alpha",
+                "min": null,
+                "max": null,
+                "default": 0.1,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_LineGlitch",
+                "tip": "Line Glitch",
+                "tex_type": "2D"
+            },
+            {
+                "type": "vector",
+                "name": "_LineGlitchOffset",
+                "tip": "Line Glitch Offset"
+            },
+            {
+                "type": "vector",
+                "name": "_RandomGlitchOffset",
+                "tip": "Random Glitch Offset"
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchAmount",
+                "tip": "Random Glitch Amount",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.089,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ColorGlitchAffect",
+                "tip": "Color Glitch Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchSpeed",
+                "tip": "Line Glitch Speed",
+                "min": null,
+                "max": null,
+                "default": -0.26,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchFrequency",
+                "tip": "Line Glitch Frequency",
+                "min": null,
+                "max": null,
+                "default": 0.2,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchHardness",
+                "tip": "Line Glitch Hardness",
+                "min": null,
+                "max": null,
+                "default": 5.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchInvertedThickness",
+                "tip": "Line Glitch Inverted Thickness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.825,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelScale",
+                "tip": "Fresnel Scale",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelPower",
+                "tip": "Fresnel Power",
+                "min": null,
+                "max": null,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelAlphaScale",
+                "tip": "Fresnel Alpha Scale",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelAlphaPower",
+                "tip": "Fresnel Alpha Power",
+                "min": null,
+                "max": null,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "NormalMap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_NormalScale",
+                "tip": "NormalScale",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Distance",
+                "tip": "Soft Intersection 2 Distance",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Distance",
+                "tip": "Soft Intersection 1 Distance",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_NormalAffect",
+                "tip": "NormalAffect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_MaskCenter",
+                "tip": "Mask Center"
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Intensity",
+                "tip": "Soft Intersection 2 Intensity",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Affect",
+                "tip": "Soft Intersection 2 Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Intensity",
+                "tip": "Soft Intersection 1 Intensity",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Affect",
+                "tip": "Soft Intersection 1 Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_MaskSize",
+                "tip": "Mask Size"
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchConstant",
+                "tip": "Random Glitch Constant",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_DissolveScale",
+                "tip": "Dissolve Scale"
+            },
+            {
+                "type": "vector",
+                "name": "_GrainScale",
+                "tip": "Grain Scale"
+            },
+            {
+                "type": "float",
+                "name": "_GrainAffect",
+                "tip": "Grain Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ColorGlitchFeature",
+                "tip": "Color Glitch Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_GrainFeature",
+                "tip": "Grain Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_GrainValues",
+                "tip": "Grain Values"
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchTiling",
+                "tip": "Random Glitch Tiling",
+                "min": null,
+                "max": null,
+                "default": 2.83,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskFalloff",
+                "tip": "Mask Falloff",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Line2Feature",
+                "tip": "Line 2 Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FresnelFeature",
+                "tip": "Fresnel Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineGlitchFeature",
+                "tip": "Line Glitch Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RandomGlitchFeature",
+                "tip": "Random Glitch Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection2Feature",
+                "tip": "Soft Intersection 2 Feature",
+                "min": 0,
+                "max": 2,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "Off"
+                    ],
+                    [
+                        1,
+                        "Alpha"
+                    ],
+                    [
+                        2,
+                        "Color"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_SoftIntersection1Feature",
+                "tip": "Soft Intersection 1 Feature",
+                "min": 0,
+                "max": 2,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "Off"
+                    ],
+                    [
+                        1,
+                        "Alpha"
+                    ],
+                    [
+                        2,
+                        "Color"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_Line1Feature",
+                "tip": "Line 1 Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_LineBothFeature",
+                "tip": "Line Both Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_DissolveHide",
+                "tip": "Dissolve Hide",
+                "min": -1.0,
+                "max": 1.0,
+                "default": -1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_DissolveFeature",
+                "tip": "Dissolve Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskFeature",
+                "tip": "Mask Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_NormalMapFeature",
+                "tip": "Normal Map Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_PositionFeature",
+                "tip": "Position Feature",
+                "min": 0,
+                "max": 2,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "X"
+                    ],
+                    [
+                        1,
+                        "Y"
+                    ],
+                    [
+                        2,
+                        "Z"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_PositionSpaceFeature",
+                "tip": "Position Space Feature",
+                "min": 0,
+                "max": 2,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "World"
+                    ],
+                    [
+                        1,
+                        "Local"
+                    ],
+                    [
+                        2,
+                        "Custom"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_PositionDirection",
+                "tip": "Position Direction",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RandomOffset",
+                "tip": "Random Offset",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_AlphaMask",
+                "tip": "Alpha Mask",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_AlphaMaskAffect",
+                "tip": "Alpha Mask Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_AlphaMaskFeature",
+                "tip": "Alpha Mask Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ZWrite",
+                "tip": "ZWrite",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_CullMode",
+                "tip": "Cull Mode",
+                "min": 0,
+                "max": 2,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "Off"
+                    ],
+                    [
+                        1,
+                        "Front"
+                    ],
+                    [
+                        2,
+                        "Back"
+                    ]
+                ]
+            },
+            {
+                "type": "float",
+                "name": "_MaskInvesion",
+                "tip": "Mask Invesion",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskLocalFeature",
+                "tip": "Mask Local Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Voxelization",
+                "tip": "Voxelization",
+                "min": null,
+                "max": null,
+                "default": 100.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_VoxelizationAffect",
+                "tip": "Voxelization Affect",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_VoxelizationFeature",
+                "tip": "Voxelization Feature",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Alpha",
+                "tip": "Alpha",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_texcoord",
+                "tip": null,
+                "tex_type": "2D"
+            },
+            {
+                "type": "keyword",
+                "name": "_VOXELIZATIONFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINEGLITCHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONSPACEFEATURE_WORLD",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONSPACEFEATURE_LOCAL",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONSPACEFEATURE_CUSTOM",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONFEATURE_X",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONFEATURE_Y",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_POSITIONFEATURE_Z",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_RANDOMGLITCHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_COLORGLITCHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_FRESNELFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_NORMALMAPFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINEBOTHFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINE2FEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_LINE1FEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION1FEATURE_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION1FEATURE_ALPHA",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION1FEATURE_COLOR",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_GRAINFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION2FEATURE_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION2FEATURE_ALPHA",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_SOFTINTERSECTION2FEATURE_COLOR",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_DISSOLVEFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_MASKFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_MASKLOCALFEATURE_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "_ALPHAMASKFEATURE_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "Hologram/Soft_Holo_Cone",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Softness",
+                "tip": "Softness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": true
+            },
+            {
+                "type": "tex",
+                "name": "_Mask",
+                "tip": "Mask",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_DepthFadeDistance",
+                "tip": "DepthFadeDistance",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskSoftness",
+                "tip": "MaskSoftness",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_MaskSoftness2",
+                "tip": "MaskSoftness 2",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Mask2",
+                "tip": "Mask 2",
+                "tex_type": "2D"
+            },
+            {
+                "type": "vector",
+                "name": "_Mask2Speed",
+                "tip": "Mask2Speed"
+            },
+            {
+                "type": "float",
+                "name": "_Alpha",
+                "tip": "Alpha",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_texcoord",
+                "tip": null,
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "__dirty",
+                "tip": null,
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "keyword",
+                "name": "UNITY_PASS_SHADOWCASTER",
+                "tip": null
+            }
+        ]
+    }
+]

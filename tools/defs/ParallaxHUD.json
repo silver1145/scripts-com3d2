@@ -1,0 +1,218 @@
+[
+    {
+        "name": "Tsutsuji/ParallaxHUD",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Culling",
+                "tip": "Culling",
+                "min": 0,
+                "max": 2,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": true,
+                "is_enum": true,
+                "enum_info": [
+                    [
+                        0,
+                        "OFF"
+                    ],
+                    [
+                        1,
+                        "FRONT"
+                    ],
+                    [
+                        2,
+                        "BACK"
+                    ]
+                ]
+            },
+            {
+                "type": "tex",
+                "name": "_Tex1",
+                "tip": "Tex1",
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_Tex2",
+                "tip": "Tex2",
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_Tex3",
+                "tip": "Tex3",
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_Tex4",
+                "tip": "Tex4",
+                "tex_type": "2D"
+            },
+            {
+                "type": "color",
+                "name": "_Color1",
+                "tip": "Color1",
+                "is_hdr": true
+            },
+            {
+                "type": "color",
+                "name": "_Color2",
+                "tip": "Color2",
+                "is_hdr": true
+            },
+            {
+                "type": "color",
+                "name": "_Color3",
+                "tip": "Color3",
+                "is_hdr": true
+            },
+            {
+                "type": "color",
+                "name": "_Color4",
+                "tip": "Color4",
+                "is_hdr": true
+            },
+            {
+                "type": "float",
+                "name": "_Height1",
+                "tip": "Height1",
+                "min": 0.0,
+                "max": 0.5,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Height2",
+                "tip": "Height2",
+                "min": 0.0,
+                "max": 0.5,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Height3",
+                "tip": "Height3",
+                "min": 0.0,
+                "max": 0.5,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Height4",
+                "tip": "Height4",
+                "min": 0.0,
+                "max": 0.5,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RotateSpeed1",
+                "tip": "RotateSpeed1",
+                "min": -10.0,
+                "max": 10.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RotateSpeed2",
+                "tip": "RotateSpeed2",
+                "min": -10.0,
+                "max": 10.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RotateSpeed3",
+                "tip": "RotateSpeed3",
+                "min": -10.0,
+                "max": 10.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RotateSpeed4",
+                "tip": "RotateSpeed4",
+                "min": -10.0,
+                "max": 10.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Displacement",
+                "tip": "Displacement",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_DissolveSpeed",
+                "tip": "DissolveSpeed",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_DissolveRotation",
+                "tip": "DissolveRotation",
+                "min": -1.0,
+                "max": 1.0,
+                "default": 0.2,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Background",
+                "tip": "Background",
+                "is_hdr": true
+            }
+        ]
+    }
+]

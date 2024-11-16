@@ -1,0 +1,445 @@
+[
+    {
+        "name": "Sci-Fi/SSFS/Base",
+        "props": [
+            {
+                "type": "tex",
+                "name": "_MainTex",
+                "tip": null,
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_MainTex2",
+                "tip": null,
+                "tex_type": "2D"
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": null,
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Color2",
+                "tip": null,
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Overbright",
+                "tip": null,
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.25,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Noise",
+                "tip": null,
+                "tex_type": "2D"
+            },
+            {
+                "type": "vector",
+                "name": "_TileCount",
+                "tip": null
+            },
+            {
+                "type": "float",
+                "name": "_SquareTiles",
+                "tip": null,
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Phase",
+                "tip": "Phase",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_PhaseSpeed",
+                "tip": "Phase Speed",
+                "min": 0.1,
+                "max": 10.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_PhaseDecrease",
+                "tip": "Phase Decrease",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_PhaseSingleTrip",
+                "tip": "Phase Decrease",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_InvertPhase",
+                "tip": null,
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_IdleData",
+                "tip": null
+            },
+            {
+                "type": "vector",
+                "name": "_PhaseDirection",
+                "tip": null
+            },
+            {
+                "type": "float",
+                "name": "_PhaseSharpness",
+                "tip": null,
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Scattering",
+                "tip": null,
+                "min": null,
+                "max": null,
+                "default": 0.25,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_Scaling",
+                "tip": null
+            },
+            {
+                "type": "float",
+                "name": "_Aberration",
+                "tip": null,
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_EffectAberration",
+                "tip": null,
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_FlashAmount",
+                "tip": null,
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Flicker",
+                "tip": null,
+                "min": 0.0,
+                "max": 0.2,
+                "default": 0.1,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_BackfaceVisibility",
+                "tip": null,
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "vector",
+                "name": "_ScanlineData",
+                "tip": null
+            },
+            {
+                "type": "float",
+                "name": "_ScaleAroundTile",
+                "tip": null,
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_ClippedTiles",
+                "tip": null,
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_RoundClipping",
+                "tip": null,
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "keyword",
+                "name": "ABERRATION",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "BILLBOARD",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "COMPLEX",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "CLIPPING",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "IDLE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "POST",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "RADIAL",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "SCALE_AROUND_TILE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "SCAN_LINES",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "TEXTURE_SWAP",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "WORLD_SPACE_SCANLINES",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "__",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "Sci-Fi/SSFS/Simple Hologram",
+        "props": [
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Intensity",
+                "tip": "Intensity",
+                "min": 1.0,
+                "max": 10.0,
+                "default": 2.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_MainTex",
+                "tip": "Model Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_ScreenTex",
+                "tip": "Screen Space Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_ScreenTexWeight",
+                "tip": "Screen Space Texture Weight",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.25,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Noise",
+                "tip": "Noise",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Aberration",
+                "tip": "Aberration",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Glitch",
+                "tip": "Glitch",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_GlitchSpeed",
+                "tip": "Glitch Speed",
+                "min": null,
+                "max": null,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_GlitchResolution",
+                "tip": "Glitch Resolution",
+                "min": 1.0,
+                "max": 10.0,
+                "default": 5.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_GlitchColor",
+                "tip": "Shimmer Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_ScanlineStrength",
+                "tip": "Scanline Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            }
+        ]
+    }
+]

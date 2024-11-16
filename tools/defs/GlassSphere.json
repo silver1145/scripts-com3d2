@@ -1,0 +1,1380 @@
+[
+    {
+        "name": "GlassSphere/oy_GlassSphere",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Use_Distortion",
+                "tip": "Use_Distortion",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Distortion",
+                "tip": "Distortion",
+                "min": 0.0,
+                "max": 20.0,
+                "default": 5.3,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Albedo_Base_Color",
+                "tip": "Albedo_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Glass_Color",
+                "tip": "Glass_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Incident_Color",
+                "tip": "Incident_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Reflection_Color",
+                "tip": "Reflection_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Specular",
+                "tip": "Specular",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.4,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Gloss",
+                "tip": "Gloss",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.96,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Emission_Base_Color",
+                "tip": "Emission_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_MatcapStyle",
+                "tip": "Matcap Style",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Scale",
+                "tip": "Matcap_Scale",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Emission_Bottom",
+                "tip": "Matcap_Emission_Bottom",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.01,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "Normal Map",
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_Texture",
+                "tip": "Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_TextureOpacity",
+                "tip": "Texture Opacity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": false
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_COMBINED",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_SEPARATE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "GlassSphere/oy_GlassSphere_Forward",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Use_Distortion",
+                "tip": "Use_Distortion",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Distortion",
+                "tip": "Distortion",
+                "min": 0.0,
+                "max": 20.0,
+                "default": 5.3,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Albedo_Base_Color",
+                "tip": "Albedo_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Glass_Color",
+                "tip": "Glass_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Incident_Color",
+                "tip": "Incident_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Reflection_Color",
+                "tip": "Reflection_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Specular",
+                "tip": "Specular",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.4,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Gloss",
+                "tip": "Gloss",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.96,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Emission_Base_Color",
+                "tip": "Emission_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_MatcapStyle",
+                "tip": "Matcap Style",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Scale",
+                "tip": "Matcap_Scale",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Emission_Bottom",
+                "tip": "Matcap_Emission_Bottom",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.01,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "Normal Map",
+                "tex_type": "2D"
+            },
+            {
+                "type": "tex",
+                "name": "_Texture",
+                "tip": "Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_TextureOpacity",
+                "tip": "Texture Opacity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": false
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_COMBINED",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_SEPARATE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "GlassSphere/oy_GlassSphere_Forward_2.0(ZWrite)",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Use_Distortion",
+                "tip": "Use_Distortion",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Distortion",
+                "tip": "Distortion",
+                "min": 0.0,
+                "max": 20.0,
+                "default": 5.3,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Albedo_Base_Color",
+                "tip": "Albedo_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Glass_Color",
+                "tip": "Glass_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Incident_Color",
+                "tip": "Incident_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Reflection_Color",
+                "tip": "Reflection_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Specular",
+                "tip": "Specular",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.4,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Gloss",
+                "tip": "Gloss",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.96,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Exposure",
+                "tip": "Exposure",
+                "min": 0.0,
+                "max": 2.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Emission_Base_Color",
+                "tip": "Emission_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_MatcapStyle",
+                "tip": "Matcap Style",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Scale",
+                "tip": "Matcap_Scale",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Emission_Bottom",
+                "tip": "Matcap_Emission_Bottom",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.01,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "Normal Map",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_NormalIntensity",
+                "tip": "Normal Intensity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Texture",
+                "tip": "Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_TextureOpacity",
+                "tip": "Texture Opacity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": false
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_COMBINED",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_SEPARATE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "GlassSphere/oy_GlassSphere_Forward_2.0",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Use_Distortion",
+                "tip": "Use_Distortion",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Distortion",
+                "tip": "Distortion",
+                "min": 0.0,
+                "max": 20.0,
+                "default": 5.3,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Albedo_Base_Color",
+                "tip": "Albedo_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Glass_Color",
+                "tip": "Glass_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Incident_Color",
+                "tip": "Incident_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Reflection_Color",
+                "tip": "Reflection_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Specular",
+                "tip": "Specular",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.4,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Gloss",
+                "tip": "Gloss",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.96,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Exposure",
+                "tip": "Exposure",
+                "min": 0.0,
+                "max": 2.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Emission_Base_Color",
+                "tip": "Emission_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_MatcapStyle",
+                "tip": "Matcap Style",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Scale",
+                "tip": "Matcap_Scale",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Emission_Bottom",
+                "tip": "Matcap_Emission_Bottom",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.01,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "Normal Map",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_NormalIntensity",
+                "tip": "Normal Intensity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Texture",
+                "tip": "Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_TextureOpacity",
+                "tip": "Texture Opacity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": false
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_COMBINED",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_SEPARATE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "GlassSphere/oy_GlassSphere_2.0(ZWrite)",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Use_Distortion",
+                "tip": "Use_Distortion",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Distortion",
+                "tip": "Distortion",
+                "min": 0.0,
+                "max": 20.0,
+                "default": 5.3,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Albedo_Base_Color",
+                "tip": "Albedo_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Glass_Color",
+                "tip": "Glass_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Incident_Color",
+                "tip": "Incident_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Reflection_Color",
+                "tip": "Reflection_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Specular",
+                "tip": "Specular",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.4,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Gloss",
+                "tip": "Gloss",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.96,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Exposure",
+                "tip": "Exposure",
+                "min": 0.0,
+                "max": 2.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Emission_Base_Color",
+                "tip": "Emission_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_MatcapStyle",
+                "tip": "Matcap Style",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Scale",
+                "tip": "Matcap_Scale",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Emission_Bottom",
+                "tip": "Matcap_Emission_Bottom",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.01,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "Normal Map",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_NormalIntensity",
+                "tip": "Normal Intensity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Texture",
+                "tip": "Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_TextureOpacity",
+                "tip": "Texture Opacity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": false
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_COMBINED",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_SEPARATE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "GlassSphere/oy_GlassSphere_2.0",
+        "props": [
+            {
+                "type": "float",
+                "name": "_Use_Distortion",
+                "tip": "Use_Distortion",
+                "min": null,
+                "max": null,
+                "default": 1.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Distortion",
+                "tip": "Distortion",
+                "min": 0.0,
+                "max": 20.0,
+                "default": 5.3,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Albedo_Base_Color",
+                "tip": "Albedo_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Glass_Color",
+                "tip": "Glass_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Incident_Color",
+                "tip": "Incident_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "color",
+                "name": "_Reflection_Color",
+                "tip": "Reflection_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Specular",
+                "tip": "Specular",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.4,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Gloss",
+                "tip": "Gloss",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.96,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Exposure",
+                "tip": "Exposure",
+                "min": 0.0,
+                "max": 2.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Emission_Base_Color",
+                "tip": "Emission_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_MatcapStyle",
+                "tip": "Matcap Style",
+                "min": null,
+                "max": null,
+                "default": 0.0,
+                "is_toggle": true,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Scale",
+                "tip": "Matcap_Scale",
+                "min": 0.0,
+                "max": 5.0,
+                "default": 0.5,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Emission_Bottom",
+                "tip": "Matcap_Emission_Bottom",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.01,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_NormalMap",
+                "tip": "Normal Map",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_NormalIntensity",
+                "tip": "Normal Intensity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 1.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "tex",
+                "name": "_Texture",
+                "tip": "Texture",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_TextureOpacity",
+                "tip": "Texture Opacity",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.0,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Color",
+                "tip": "Color",
+                "is_hdr": false
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "LIGHTMAP_ON",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_COMBINED",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DIRLIGHTMAP_SEPARATE",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_OFF",
+                "tip": null
+            },
+            {
+                "type": "keyword",
+                "name": "DYNAMICLIGHTMAP_ON",
+                "tip": null
+            }
+        ]
+    },
+    {
+        "name": "GlassSphere/oy_Matcap",
+        "props": [
+            {
+                "type": "color",
+                "name": "_Reflection_Color",
+                "tip": "Reflection_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            },
+            {
+                "type": "color",
+                "name": "_Emission_Base_Color",
+                "tip": "Emission_Base_Color",
+                "is_hdr": false
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Emission_Bottom",
+                "tip": "Matcap_Emission_Bottom",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.01,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            }
+        ]
+    },
+    {
+        "name": "GlassSphere/oy_MatcapSimple",
+        "props": [
+            {
+                "type": "tex",
+                "name": "_Matcap",
+                "tip": "Matcap",
+                "tex_type": "2D"
+            },
+            {
+                "type": "float",
+                "name": "_Matcap_Strength",
+                "tip": "Matcap_Strength",
+                "min": 0.0,
+                "max": 1.0,
+                "default": 0.18,
+                "is_toggle": false,
+                "is_int": false,
+                "is_enum": false,
+                "enum_info": null
+            }
+        ]
+    }
+]
