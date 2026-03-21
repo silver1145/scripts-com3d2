@@ -1329,7 +1329,8 @@ public static class MateTexCache
             if (configs == null)
             {
                 configs = new List<ConfigurationManager.SettingEntryBase>();
-                var scriptLoader = BepInEx.Bootstrap.Chainloader.PluginInfos.Values.Select(x => x.Instance).Where(x => x.Info.Metadata.GUID == "horse.coder.tools.scriptloader").FirstOrDefault();
+                var scriptLoaderInfo = BepInEx.Bootstrap.Chainloader.PluginInfos.Values.FirstOrDefault(x => x.Metadata.GUID == "horse.coder.tools.scriptloader");
+                var scriptLoader = scriptLoaderInfo?.Instance;
                 if (scriptLoader != null)
                 {
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_golbalEnable, scriptLoader));
