@@ -191,13 +191,18 @@ public static class NPRShaderAdd
         string texName = br.ReadString();
         br.ReadString();    // Tex Path
         Texture2D tex = ImportCM.CreateTexture(texName + ".tex");
-		tex.name = texName;
-        mat.SetTexture(prop, CubemapConverter.ByTexture2D(tex));
-        // Only Manage Texture2D
-        if (bodyskin != null)
+        Cubemap cube = CubemapConverter.ByTexture2D(tex);
+        UnityEngine.Object.Destroy(tex);
+        mat.SetTexture(prop, cube);
+        if (cube != null)
         {
-            bodyskin.listDEL.Add(tex);
+            cube.name = texName;
+            if (bodyskin != null)
+            {
+                bodyskin.listDEL.Add(cube);
+            }
         }
+        
         br.ReadSingle();    // Offset.x
         br.ReadSingle();    // Offset.y
         br.ReadSingle();    // Scale.x
@@ -284,21 +289,21 @@ public static class NPRShaderAdd
         return codeMatcher.InstructionEnumeration();
     }
 
-    [HarmonyPatch(typeof(Util), "LoadALLShaders")]
+    [HarmonyPatch(typeof(COM3D2.NPRShader.Plugin.Util), "LoadALLShaders")]
     [HarmonyPrefix]
     public static void LoadALLShadersPrefix()
     {
         AssetLoader.m_dicCacheMaterial = new Dictionary<string, Material>(StringComparer.OrdinalIgnoreCase);
     }
 
-    [HarmonyPatch(typeof(Util), "LoadALLShaders")]
+    [HarmonyPatch(typeof(COM3D2.NPRShader.Plugin.Util), "LoadALLShaders")]
     [HarmonyPostfix]
     public static void LoadALLShadersPostfix()
     {
         LoadShaderMatNames();
     }
 
-    [HarmonyPatch(typeof(Util), "LoadALLShaders")]
+    [HarmonyPatch(typeof(COM3D2.NPRShader.Plugin.Util), "LoadALLShaders")]
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> LoadALLShadersTranspiler(IEnumerable<CodeInstruction> instructions)
     {
@@ -616,81 +621,102 @@ public static class NPRShaderAdd
 
     public class CubemapConverter
     {
+        private static readonly Vector3[][] FaceDirections = new Vector3[][]
+        {
+            new[] { new Vector3(-1f, 1f, -1f), new Vector3(1f, 1f, -1f), new Vector3(-1f, -1f, -1f), new Vector3(1f, -1f, -1f) },
+            new[] { new Vector3(1f, 1f, 1f), new Vector3(-1f, 1f, 1f), new Vector3(1f, -1f, 1f), new Vector3(-1f, -1f, 1f) },
+            new[] { new Vector3(1f, 1f, -1f), new Vector3(1f, 1f, 1f), new Vector3(1f, -1f, -1f), new Vector3(1f, -1f, 1f) },
+            new[] { new Vector3(-1f, 1f, 1f), new Vector3(-1f, 1f, -1f), new Vector3(-1f, -1f, 1f), new Vector3(-1f, -1f, -1f) },
+            new[] { new Vector3(-1f, 1f, -1f), new Vector3(-1f, 1f, 1f), new Vector3(1f, 1f, -1f), new Vector3(1f, 1f, 1f) },
+            new[] { new Vector3(1f, -1f, -1f), new Vector3(1f, -1f, 1f), new Vector3(-1f, -1f, -1f), new Vector3(-1f, -1f, 1f) },
+        };
+
         public static Cubemap ByTexture2D(Texture2D originTex)
         {
-            if (Math.Abs((float)originTex.width / originTex.height - 2) < 0.05)
+            float ratio = (float)originTex.width / originTex.height;
+            if (Math.Abs(ratio - 2) < 0.05)
             {
                 return ByLatLongTexture2D(originTex);
+            }
+            if (Math.Abs(ratio - 1) < 0.05)
+            {
+                return BySphereTexture2D(originTex);
             }
             return ByCubeTexture2D(originTex);
         }
 
         public static Cubemap ByCubeTexture2D(Texture2D originTex)
         {
-            Texture2D tempTex = new Texture2D(originTex.width, originTex.height, originTex.format, false);
-            Graphics.CopyTexture(originTex, tempTex);
-            FlipPixels(tempTex, false, true);
+            int w = originTex.width;
+            int h = originTex.height;
+            Color[] pixels = originTex.GetPixels();
+            FlipPixelsY(pixels, w, h);
             Cubemap cubemap = null;
-            if (Math.Round((float)tempTex.width / tempTex.height) == 6)
+            float ratio = (float)w / h;
+            if (Math.Round(ratio) == 6)
             {
-                int everyW = (int)(tempTex.width / 6f);
-                int cubeMapSize = Mathf.Min(everyW, tempTex.height);
+                int everyW = (int)(w / 6f);
+                int cubeMapSize = Mathf.Min(everyW, h);
                 cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
-                cubemap.SetPixels(tempTex.GetPixels(0, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
-                cubemap.SetPixels(tempTex.GetPixels(2 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
-                cubemap.SetPixels(tempTex.GetPixels(3 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
-                cubemap.SetPixels(tempTex.GetPixels(4 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
-                cubemap.SetPixels(tempTex.GetPixels(5 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 2 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 3 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 4 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 5 * cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
                 cubemap.Apply();
             }
-            else if (Math.Round((float)tempTex.height / tempTex.width) == 6)
+            else if (Math.Abs(ratio - 1.0 / 6.0) < 0.05)
             {
-                int everyH = (int)(tempTex.height / 6f);
-                int cubeMapSize = Mathf.Min(tempTex.width, everyH);
+                int everyH = (int)(h / 6f);
+                int cubeMapSize = Mathf.Min(w, everyH);
                 cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
-                cubemap.SetPixels(tempTex.GetPixels(0, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
-                cubemap.SetPixels(tempTex.GetPixels(0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
-                cubemap.SetPixels(tempTex.GetPixels(0, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
-                cubemap.SetPixels(tempTex.GetPixels(0, 3 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
-                cubemap.SetPixels(tempTex.GetPixels(0, 4 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
-                cubemap.SetPixels(tempTex.GetPixels(0, 5 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, 3 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, 4 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, 5 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
                 cubemap.Apply();
             }
-            else if (Math.Abs((float)tempTex.width / tempTex.height - 4.0 / 3.0) < 0.05)
+            else if (Math.Abs(ratio - 4.0 / 3.0) < 0.05)
             {
-                int everyW = (int)(tempTex.width / 4f);
-                int everyH = (int)(tempTex.height / 3f);
+                int everyW = (int)(w / 4f);
+                int everyH = (int)(h / 3f);
                 int cubeMapSize = Mathf.Min(everyW, everyH);
                 cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
-                cubemap.SetPixels(tempTex.GetPixels(0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
-                cubemap.SetPixels(tempTex.GetPixels(2 * cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
-                cubemap.SetPixels(tempTex.GetPixels(3 * cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 2 * cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 3 * cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
                 cubemap.Apply();
             }
-            else if (Math.Abs((float)tempTex.height / tempTex.width - 4.0 / 3.0) < 0.05)
+            else if (Math.Abs(ratio - 3.0 / 4.0) < 0.05)
             {
-                int everyW = (int)(tempTex.width / 3f);
-                int everyH = (int)(tempTex.height / 4f);
+                int everyW = (int)(w / 3f);
+                int everyH = (int)(h / 4f);
                 int cubeMapSize = Mathf.Min(everyW, everyH);
                 cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
-                cubemap.SetPixels(tempTex.GetPixels(0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
-                cubemap.SetPixels(tempTex.GetPixels(2 * cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
-                cubemap.SetPixels(tempTex.GetPixels(cubeMapSize, 3 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, 0, cubeMapSize, cubeMapSize), CubemapFace.PositiveY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 0, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveZ);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, 2 * cubeMapSize, cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.PositiveX);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, 2 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeY);
+                cubemap.SetPixels(GetPixelBlock(pixels, w, cubeMapSize, 3 * cubeMapSize, cubeMapSize, cubeMapSize), CubemapFace.NegativeZ);
                 cubemap.Apply();
             }
             else
             {
-                Debug.LogWarning($"Cannot be converted to Cubemap: {tempTex} ({tempTex.width}x{tempTex.height})");
+                Debug.LogWarning($"Cannot be converted to Cubemap: {originTex} ({w}x{h})");
             }
-            UnityEngine.Object.Destroy(tempTex);
             return cubemap;
+        }
+
+        static Vector3[] GetFaceDirections(int faceIndex)
+        {
+            return FaceDirections[faceIndex];
         }
 
         // from https://assetstore.unity.com/packages/tools/utilities/panorama-to-cubemap-13616
@@ -699,69 +725,28 @@ public static class NPRShaderAdd
             int everyW = (int)(originTex.width / 4f);
             int everyH = (int)(originTex.height / 3f);
             int cubeMapSize = Mathf.Min(everyW, everyH);
+            Color[] srcPixels = originTex.GetPixels();
+            int srcWidth = originTex.width;
+            int srcHeight = originTex.height;
             Cubemap cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
-            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 0).GetPixels(), CubemapFace.NegativeX);
-            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 1).GetPixels(), CubemapFace.PositiveX);
-            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 2).GetPixels(), CubemapFace.PositiveZ);
-            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 3).GetPixels(), CubemapFace.NegativeZ);
-            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 4).GetPixels(), CubemapFace.PositiveY);
-            cubemap.SetPixels(CreateCubemapTexture(originTex, cubeMapSize, 5).GetPixels(), CubemapFace.NegativeY);
+            cubemap.SetPixels(CreateFacePixelsLatLong(srcPixels, srcWidth, srcHeight, cubeMapSize, 0), CubemapFace.NegativeX);
+            cubemap.SetPixels(CreateFacePixelsLatLong(srcPixels, srcWidth, srcHeight, cubeMapSize, 1), CubemapFace.PositiveX);
+            cubemap.SetPixels(CreateFacePixelsLatLong(srcPixels, srcWidth, srcHeight, cubeMapSize, 2), CubemapFace.PositiveZ);
+            cubemap.SetPixels(CreateFacePixelsLatLong(srcPixels, srcWidth, srcHeight, cubeMapSize, 3), CubemapFace.NegativeZ);
+            cubemap.SetPixels(CreateFacePixelsLatLong(srcPixels, srcWidth, srcHeight, cubeMapSize, 4), CubemapFace.PositiveY);
+            cubemap.SetPixels(CreateFacePixelsLatLong(srcPixels, srcWidth, srcHeight, cubeMapSize, 5), CubemapFace.NegativeY);
             cubemap.Apply();
             return cubemap;
         }
 
-        static Texture2D CreateCubemapTexture(Texture2D m_srcTexture, int texSize, int faceIndex)
+        static Color[] CreateFacePixelsLatLong(Color[] srcPixels, int srcWidth, int srcHeight, int texSize, int faceIndex)
         {
-            Texture2D tex = new Texture2D(texSize, texSize, TextureFormat.RGB24, false);
-
-            Vector3[] vDirA = new Vector3[4];
-            if (faceIndex == 0)
-            {
-                vDirA[0] = new Vector3(-1.0f, 1.0f, -1.0f);
-                vDirA[1] = new Vector3(1.0f, 1.0f, -1.0f);
-                vDirA[2] = new Vector3(-1.0f, -1.0f, -1.0f);
-                vDirA[3] = new Vector3(1.0f, -1.0f, -1.0f);
-            }
-            if (faceIndex == 1)
-            {
-                vDirA[0] = new Vector3(1.0f, 1.0f, 1.0f);
-                vDirA[1] = new Vector3(-1.0f, 1.0f, 1.0f);
-                vDirA[2] = new Vector3(1.0f, -1.0f, 1.0f);
-                vDirA[3] = new Vector3(-1.0f, -1.0f, 1.0f);
-            }
-            if (faceIndex == 2)
-            {
-                vDirA[0] = new Vector3(1.0f, 1.0f, -1.0f);
-                vDirA[1] = new Vector3(1.0f, 1.0f, 1.0f);
-                vDirA[2] = new Vector3(1.0f, -1.0f, -1.0f);
-                vDirA[3] = new Vector3(1.0f, -1.0f, 1.0f);
-            }
-            if (faceIndex == 3)
-            {
-                vDirA[0] = new Vector3(-1.0f, 1.0f, 1.0f);
-                vDirA[1] = new Vector3(-1.0f, 1.0f, -1.0f);
-                vDirA[2] = new Vector3(-1.0f, -1.0f, 1.0f);
-                vDirA[3] = new Vector3(-1.0f, -1.0f, -1.0f);
-            }
-            if (faceIndex == 4)
-            {
-                vDirA[0] = new Vector3(-1.0f, 1.0f, -1.0f);
-                vDirA[1] = new Vector3(-1.0f, 1.0f, 1.0f);
-                vDirA[2] = new Vector3(1.0f, 1.0f, -1.0f);
-                vDirA[3] = new Vector3(1.0f, 1.0f, 1.0f);
-            }
-            if (faceIndex == 5)
-            {
-                vDirA[0] = new Vector3(1.0f, -1.0f, -1.0f);
-                vDirA[1] = new Vector3(1.0f, -1.0f, 1.0f);
-                vDirA[2] = new Vector3(-1.0f, -1.0f, -1.0f);
-                vDirA[3] = new Vector3(-1.0f, -1.0f, 1.0f);
-            }
-            Vector3 rotDX1 = (vDirA[1] - vDirA[0]) / (float)texSize;
-            Vector3 rotDX2 = (vDirA[3] - vDirA[2]) / (float)texSize;
-            float dy = 1.0f / (float)texSize;
+            Vector3[] vDirA = GetFaceDirections(faceIndex);
+            Vector3 rotDX1 = (vDirA[1] - vDirA[0]) / texSize;
+            Vector3 rotDX2 = (vDirA[3] - vDirA[2]) / texSize;
+            float dy = 1.0f / texSize;
             float fy = 0.0f;
-            Color[] cols = new Color[texSize];
+            Color[] facePixels = new Color[texSize * texSize];
             for (int y = 0; y < texSize; y++)
             {
                 Vector3 xv1 = vDirA[0];
@@ -770,84 +755,144 @@ public static class NPRShaderAdd
                 {
                     Vector3 v = ((xv2 - xv1) * fy) + xv1;
                     v.Normalize();
-                    cols[x] = CalcProjectionSpherical(m_srcTexture, v);
+                    facePixels[y * texSize + x] = CalcProjectionLatLong(srcPixels, srcWidth, srcHeight, v);
                     xv1 += rotDX1;
                     xv2 += rotDX2;
                 }
-                tex.SetPixels(0, y, texSize, 1, cols);
                 fy += dy;
             }
-            tex.wrapMode = TextureWrapMode.Clamp;
-            tex.Apply();
-            return tex;
+            return facePixels;
         }
 
-        static Color CalcProjectionSpherical(Texture2D m_srcTexture, Vector3 vDir)
+        static Color CalcProjectionLatLong(Color[] srcPixels, int srcWidth, int srcHeight, Vector3 vDir)
         {
-            float theta = Mathf.Atan2(vDir.z, vDir.x);  // -π ～ +π (vertical rotation)
-            float phi = Mathf.Acos(vDir.y);             //  0  ～ +π (horizontal rotation)
+            float theta = Mathf.Atan2(vDir.z, vDir.x);  // -π ～ +π
+            float phi = Mathf.Acos(vDir.y);             //  0  ～ +π
 
             while (theta < -Mathf.PI) theta += Mathf.PI + Mathf.PI;
             while (theta > Mathf.PI) theta -= Mathf.PI + Mathf.PI;
 
-            float dx = theta / Mathf.PI;        // -1.0 ～ +1.0.
-            float dy = phi / Mathf.PI;          //  0.0 ～ +1.0.
+            float dx = theta / Mathf.PI;        // -1.0 ～ +1.0
+            float dy = phi / Mathf.PI;          //  0.0 ～ +1.0
 
             dx = dx * 0.5f + 0.5f;
-            int px = (int)(dx * (float)m_srcTexture.width);
-            if (px < 0)
-            {
-                px = 0;
-            }
-            if (px >= m_srcTexture.width)
-            {
-                px = m_srcTexture.width - 1;
-            }
-            int py = (int)(dy * (float)m_srcTexture.height);
-            if (py < 0)
-            {
-                py = 0;
-            }
-            if (py >= m_srcTexture.height)
-            {
-                py = m_srcTexture.height - 1;
-            }
-            Color col = m_srcTexture.GetPixel(px, m_srcTexture.height - py - 1);
-            return col;
+            int px = (int)(dx * srcWidth);
+            if (px < 0) px = 0;
+            if (px >= srcWidth) px = srcWidth - 1;
+            int py = (int)(dy * srcHeight);
+            if (py < 0) py = 0;
+            if (py >= srcHeight) py = srcHeight - 1;
+            return srcPixels[(srcHeight - py - 1) * srcWidth + px];
         }
 
-        static Texture2D FlipPixels(Texture2D texture, bool flipX, bool flipY)
+        public static Cubemap BySphereTexture2D(Texture2D originTex)
         {
-            if (!flipX && !flipY)
+            int cubeMapSize = originTex.width / 2;
+            Color[] srcPixels = originTex.GetPixels();
+            int srcWidth = originTex.width;
+            int srcHeight = originTex.height;
+            Cubemap cubemap = new Cubemap(cubeMapSize, TextureFormat.RGBA32, false);
+            cubemap.SetPixels(CreateFacePixelsSphere(srcPixels, srcWidth, srcHeight, cubeMapSize, 0), CubemapFace.NegativeX);
+            cubemap.SetPixels(CreateFacePixelsSphere(srcPixels, srcWidth, srcHeight, cubeMapSize, 1), CubemapFace.PositiveX);
+            cubemap.SetPixels(CreateFacePixelsSphere(srcPixels, srcWidth, srcHeight, cubeMapSize, 2), CubemapFace.PositiveZ);
+            cubemap.SetPixels(CreateFacePixelsSphere(srcPixels, srcWidth, srcHeight, cubeMapSize, 3), CubemapFace.NegativeZ);
+            cubemap.SetPixels(CreateFacePixelsSphere(srcPixels, srcWidth, srcHeight, cubeMapSize, 4), CubemapFace.PositiveY);
+            cubemap.SetPixels(CreateFacePixelsSphere(srcPixels, srcWidth, srcHeight, cubeMapSize, 5), CubemapFace.NegativeY);
+            cubemap.Apply();
+            return cubemap;
+        }
+
+        static Color[] CreateFacePixelsSphere(Color[] srcPixels, int srcWidth, int srcHeight, int texSize, int faceIndex)
+        {
+            Vector3[] vDirA = GetFaceDirections(faceIndex);
+            Vector3 rotDX1 = (vDirA[1] - vDirA[0]) / texSize;
+            Vector3 rotDX2 = (vDirA[3] - vDirA[2]) / texSize;
+            float dy = 1.0f / texSize;
+            float fy = 0.0f;
+            Color[] facePixels = new Color[texSize * texSize];
+            for (int y = 0; y < texSize; y++)
             {
-                return texture;
-            }
-            if (flipX)
-            {
-                for (int i = 0; i < texture.width / 2; i++)
+                Vector3 xv1 = vDirA[0];
+                Vector3 xv2 = vDirA[2];
+                for (int x = 0; x < texSize; x++)
                 {
-                    for (int j = 0; j < texture.height; j++)
-                    {
-                        Color tempC = texture.GetPixel(i, j);
-                        texture.SetPixel(i, j, texture.GetPixel(texture.width - 1 - i, j));
-                        texture.SetPixel(texture.width - 1 - i, j, tempC);
-                    }
+                    Vector3 v = ((xv2 - xv1) * fy) + xv1;
+                    v.Normalize();
+                    facePixels[y * texSize + x] = CalcProjectionSphere(srcPixels, srcWidth, srcHeight, v);
+                    xv1 += rotDX1;
+                    xv2 += rotDX2;
+                }
+                fy += dy;
+            }
+            return facePixels;
+        }
+
+        static Color CalcProjectionSphere(Color[] srcPixels, int srcWidth, int srcHeight, Vector3 vDir)
+        {
+            float sx = vDir.z;
+            float sy = vDir.y;
+            float sz = vDir.x;
+            float m = 2.0f * Mathf.Sqrt(sx * sx + sy * sy + (sz + 1.0f) * (sz + 1.0f));
+            float u, v;
+            if (m > 0.001f)
+            {
+                u = sx / m + 0.5f;
+                v = sy / m + 0.5f;
+            }
+            else
+            {
+                u = 0.5f;
+                v = 0.5f;
+            }
+            int px = (int)(u * srcWidth);
+            if (px < 0) px = 0;
+            if (px >= srcWidth) px = srcWidth - 1;
+            int py = (int)(v * srcHeight);
+            if (py < 0) py = 0;
+            if (py >= srcHeight) py = srcHeight - 1;
+            return srcPixels[py * srcWidth + px];
+        }
+
+        static void FlipPixelsX(Color[] pixels, int w, int h)
+        {
+            for (int j = 0; j < h; j++)
+            {
+                int row = j * w;
+                for (int i = 0; i < w / 2; i++)
+                {
+                    int left = row + i;
+                    int right = row + (w - 1 - i);
+
+                    Color temp = pixels[left];
+                    pixels[left] = pixels[right];
+                    pixels[right] = temp;
                 }
             }
-            if (flipY)
+        }
+
+        static void FlipPixelsY(Color[] pixels, int w, int h)
+        {
+            for (int j = 0; j < h / 2; j++)
             {
-                for (int i = 0; i < texture.width; i++)
+                int up = j * w;
+                int down = (h - 1 - j) * w;
+                for (int i = 0; i < w; i++)
                 {
-                    for (int j = 0; j < texture.height / 2; j++)
-                    {
-                        Color tempC = texture.GetPixel(i, j);
-                        texture.SetPixel(i, j, texture.GetPixel(i, texture.height - 1 - j));
-                        texture.SetPixel(i, texture.height - 1 - j, tempC);
-                    }
+                    Color temp = pixels[up + i];
+                    pixels[up + i] = pixels[down + i];
+                    pixels[down + i] = temp;
                 }
             }
-            texture.Apply();
-            return texture;
+        }
+
+        static Color[] GetPixelBlock(Color[] pixels, int texWidth, int bx, int by, int bw, int bh)
+        {
+            Color[] block = new Color[bw * bh];
+            for (int j = 0; j < bh; j++)
+            {
+                Array.Copy(pixels, (by + j) * texWidth + bx, block, j * bw, bw);
+            }
+            return block;
         }
     }
 
