@@ -20,18 +20,18 @@ public static class MipmapExtend
         instance = null;
     }
 
-    public static Texture2D CreateTexture2D(TextureResource tex_res)
+    public static Texture2D CreateTexture2D(TextureResource tex_res, bool mipmap, bool linear)
     {
         if (tex_res.format == TextureFormat.DXT1 || tex_res.format == TextureFormat.DXT5)
         {
-            Texture2D texture2D = new Texture2D(tex_res.width, tex_res.height, tex_res.format, true);
+            Texture2D texture2D = new Texture2D(tex_res.width, tex_res.height, tex_res.format, mipmap, linear);
             texture2D.LoadRawTextureData(tex_res.data);
             texture2D.Apply();
             return texture2D;
         }
         if (tex_res.format == TextureFormat.ARGB32 || tex_res.format == TextureFormat.RGB24)
         {
-            Texture2D texture2D2 = new Texture2D(2, 2, tex_res.format, true);
+            Texture2D texture2D2 = new Texture2D(2, 2, tex_res.format, mipmap, linear);
             texture2D2.LoadImage(tex_res.data);
             return texture2D2;
         }
@@ -43,9 +43,11 @@ public static class MipmapExtend
     [HarmonyPrefix]
     public static bool CreateTexturePrefix1(ref Texture2D __result, string f_strFileName)
     {
-        if (f_strFileName.ToLower().Contains("mipmap"))
+        bool mipmap = f_strFileName.ToLower().Contains("mipmap");
+        bool linear = f_strFileName.ToLower().Contains("linear");
+        if (mipmap || linear)
         {
-            __result = CreateTexture2D(ImportCM.LoadTexture(GameUty.FileSystem, f_strFileName, true));
+            __result = CreateTexture2D(ImportCM.LoadTexture(GameUty.FileSystem, f_strFileName, true), mipmap, linear);
             return false;
         }
         return true;
@@ -55,9 +57,11 @@ public static class MipmapExtend
     [HarmonyPrefix]
     public static bool CreateTexturePrefix2(ref Texture2D __result, AFileSystemBase f_fileSystem, string f_strFileName)
     {
-        if (f_strFileName.ToLower().Contains("mipmap"))
+        bool mipmap = f_strFileName.ToLower().Contains("mipmap");
+        bool linear = f_strFileName.ToLower().Contains("linear");
+        if (mipmap || linear)
         {
-            __result = CreateTexture2D(ImportCM.LoadTexture(f_fileSystem, f_strFileName, true));
+            __result = CreateTexture2D(ImportCM.LoadTexture(GameUty.FileSystem, f_strFileName, true), mipmap, linear);
             return false;
         }
         return true;

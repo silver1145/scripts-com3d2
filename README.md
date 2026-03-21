@@ -4,22 +4,22 @@ Some COM3D2 functional scripts
 
 ## Description
 
-| Script Name                                 | Description                                      | Require                                                                                                                                        |
-| ------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| [change_tex_fix](#change_tex_fix)           | Fix TBody.ChangeTex when file does not exist     | -                                                                                                                                              |
-| [dcm_sync_anm](#dcm_sync_anm)               | DCM Sync With Item Anm and MovieTexture          | COM3D2.DanceCameraMotion.Plugin                                                                                                                |
-| [extract_ks_scripts](#extract_ks_scripts)   | Extract *.ks scripts from game                   | -                                                                                                                                              |
-| [infinity_color_fix](#infinity_color_fix)   | Fix InfinityColor on Alpha Channel and Add Mask  | [*Optional*] COM3D2.MaidLoader                                                                                                                 |
-| [partsedit_add_bone](#partsedit_add_bone)   | Make Mune & Hip Bone Moveable and Scaleable      | COM3D2.PartsEdit.Plugin                                                                                                                        |
-| [inoutanim_sync](#inoutanim_sync)           | InoutAnim Sync                                   | COM3D2.InOutAnimation.Plugin<br>[*Optional*] COM3D2.VibeYourMaid.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin<br>[*Optional*] vym_enhance |
-| [wrap_mode_extend_sc](#wrap_mode_extend_sc) | Make textures repeated for SceneCapture          | COM3D2.SceneCapture.Plugin                                                                                                                     |
-| [model_extend](#model_extend)               | Model Extend                                     | -                                                                                                                                              |
-| [npr_addition](#npr_addition)               | Add Shader to COM3D2.NPRShader.Plugin            | COM3D2.NPRShader.Plugin                                                                                                                        |
-| [pmat_extend](#pmat_extend)                 | Allow Mate set RenderQueue (pmat)                | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin                                                                |
-| [vym_enhance](#vym_enhance)                 | VYM Function Enhance                             | COM3D2.VibeYourMaid.Plugin                                                                                                                     |
-| [mipmap_extend](#mipmap_extend)             | Enable Mipmap for textures with `mipmap` in name | -                                                                                                                                              |
-| [mate_tex_cache](#mate_tex_cache)           | Mate & Tex Cache                                 | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader                                                                         |
-| [~~npr_930_dpi_fix~~](#npr_930_dpi_fix)     | DPI Fix on 2K for NPRShader v930                 | COM3D2.NPRShader.Plugin(v930)                                                                                                                  |
+| Script Name                                 | Description                                              | Require                                                                                                                                        |
+| ------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| [change_tex_fix](#change_tex_fix)           | Fix TBody.ChangeTex when file does not exist             | -                                                                                                                                              |
+| [dcm_sync_anm](#dcm_sync_anm)               | DCM Sync With Item Anm and MovieTexture                  | COM3D2.DanceCameraMotion.Plugin                                                                                                                |
+| [extract_ks_scripts](#extract_ks_scripts)   | Extract *.ks scripts from game                           | -                                                                                                                                              |
+| [infinity_color_fix](#infinity_color_fix)   | Fix InfinityColor on Alpha Channel and Add Mask          | [*Optional*] COM3D2.MaidLoader                                                                                                                 |
+| [partsedit_add_bone](#partsedit_add_bone)   | Make Mune & Hip Bone Moveable and Scaleable              | COM3D2.PartsEdit.Plugin                                                                                                                        |
+| [inoutanim_sync](#inoutanim_sync)           | InoutAnim Sync                                           | COM3D2.InOutAnimation.Plugin<br>[*Optional*] COM3D2.VibeYourMaid.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin<br>[*Optional*] vym_enhance |
+| [wrap_mode_extend_sc](#wrap_mode_extend_sc) | Make textures repeated for SceneCapture                  | COM3D2.SceneCapture.Plugin                                                                                                                     |
+| [model_extend](#model_extend)               | Model Extend                                             | -                                                                                                                                              |
+| [npr_addition](#npr_addition)               | Add Shader to COM3D2.NPRShader.Plugin                    | COM3D2.NPRShader.Plugin                                                                                                                        |
+| [pmat_extend](#pmat_extend)                 | Allow Mate set RenderQueue (pmat)                        | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin                                                                |
+| [vym_enhance](#vym_enhance)                 | VYM Function Enhance                                     | COM3D2.VibeYourMaid.Plugin                                                                                                                     |
+| [mipmap_extend](#mipmap_extend)             | Enable Mipmap / Linear for textures with keyword in name | -                                                                                                                                              |
+| [mate_tex_cache](#mate_tex_cache)           | Mate & Tex Cache                                         | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader                                                                         |
+| [~~npr_930_dpi_fix~~](#npr_930_dpi_fix)     | DPI Fix on 2K for NPRShader v930                         | COM3D2.NPRShader.Plugin(v930)                                                                                                                  |
 
 ## Install
 
@@ -319,7 +319,7 @@ Allow setting RenderQueue [-1..5000] (-1 to use render queue from shader) ​​
 
 ### [mipmap_extend](./scripts/mipmap_extend.cs)
 
-All texture with `mipmap` in the name will enable Mipmap.
+Textures with `mipmap` in the name will enable Mipmap; textures with `linear` in the name will enable Linear.
 
 ### [mate_tex_cache](./scripts/mate_tex_cache.cs)
 
