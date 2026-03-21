@@ -18,9 +18,8 @@ Some COM3D2 functional scripts
 | [npr_addition](#npr_addition)               | Add Shader to COM3D2.NPRShader.Plugin                    | COM3D2.NPRShader.Plugin                                                                                                                        |
 | [pmat_extend](#pmat_extend)                 | Allow Mate set RenderQueue (pmat)                        | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin                                                                |
 | [vym_enhance](#vym_enhance)                 | VYM Function Enhance                                     | COM3D2.VibeYourMaid.Plugin                                                                                                                     |
-| [mipmap_extend](#mipmap_extend)             | Enable Mipmap / Linear for textures with keyword in name | -                                                                                                                                              |
-| [mate_tex_cache](#mate_tex_cache)           | Mate & Tex Cache                                         | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader                                                                         |
-| [~~npr_930_dpi_fix~~](#npr_930_dpi_fix)     | DPI Fix on 2K for NPRShader v930                         | COM3D2.NPRShader.Plugin(v930)                                                                                                                  |
+| ~~[mipmap_extend](#mipmap_extend)~~         | Enable Mipmap / Linear for textures with keyword in name | -                                                                                                                                              |
+| ~~[mate_tex_cache](#mate_tex_cache)~~       | Mate & Tex Cache                                         | [*Optional*] COM3D2.NPRShader.Plugin<br>[*Optional*] COM3D2.MaidLoader                                                                         |
 
 ## Install
 
@@ -322,12 +321,14 @@ Allow setting RenderQueue [-1..5000] (-1 to use render queue from shader) ​​
 
 `COM3D2.VibeYourMaid.Plugin` function enhance & potential error fix.
 
-### [mipmap_extend](./scripts/mipmap_extend.cs)
+### [~~mipmap_extend~~](./deprecated/mipmap_extend.cs)
 
+**Deprecated**: Replace by [GraphicEnhance](https://github.com/silver1145/COM3D2.GraphicEnhance)
 Textures with `mipmap` in the name will enable Mipmap; textures with `linear` in the name will enable Linear.
 
-### [mate_tex_cache](./scripts/mate_tex_cache.cs)
+### [~~mate_tex_cache~~](./deprecated/mate_tex_cache.cs)
 
+**Deprecated**: Replace by [GraphicEnhance](https://github.com/silver1145/COM3D2.GraphicEnhance)
 Cache textures and materials for COM3D2 and NPRShader.
 
 Configuration `BepinEx/config/MateTexCache.cfg`:
@@ -358,8 +359,3 @@ Priority (from high to low):
  4. MateCacheType & TexCacheType
 
 If `COM3D2.MaidLoader` is installed, the refresh function of MaidLoader will mark all caches as expired. When loading expired caches, it will be decided whether to reload based on the file hash.
-
-### ~~npr_930_dpi_fix~~
-
-**Deprecated**
-DPI Fix on 2K for NPRShader v930.
