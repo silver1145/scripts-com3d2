@@ -10,6 +10,7 @@ Some COM3D2 functional scripts
 | [dcm_sync_anm](#dcm_sync_anm)               | DCM Sync With Item Anm and MovieTexture                  | COM3D2.DanceCameraMotion.Plugin                                                                                                                |
 | [extract_ks_scripts](#extract_ks_scripts)   | Extract *.ks scripts from game                           | -                                                                                                                                              |
 | [infinity_color_fix](#infinity_color_fix)   | Fix InfinityColor on Alpha Channel and Add Mask          | [*Optional*] COM3D2.MaidLoader                                                                                                                 |
+| [material_mgr_fix](#material_mgr_fix)       | Fix MaterialMgr when change materials outside            | -                                                                                                                                              |
 | [partsedit_add_bone](#partsedit_add_bone)   | Make Mune & Hip Bone Moveable and Scaleable              | COM3D2.PartsEdit.Plugin                                                                                                                        |
 | [inoutanim_sync](#inoutanim_sync)           | InoutAnim Sync                                           | COM3D2.InOutAnimation.Plugin<br>[*Optional*] COM3D2.VibeYourMaid.Plugin<br>[*Optional*] COM3D2.SceneCapture.Plugin<br>[*Optional*] vym_enhance |
 | [wrap_mode_extend_sc](#wrap_mode_extend_sc) | Make textures repeated for SceneCapture                  | COM3D2.SceneCapture.Plugin                                                                                                                     |
@@ -58,6 +59,10 @@ Only need to create {name}.infinity_mask.tex for the texture {name}.tex that nee
 The grayscale [0-1] in the Mask texture determines whether the infinity color is displayed, 0 means that the original texture is not affected by the infinity color, and 1 means that the infinity color texture is displayed. The grayscale is allowed to be an intermediate value for mixing.
 
 If `COM3D2.MaidLoader` is installed, the infinity color Mask texture will also be refreshed when the Mod Refresh button is clicked.
+
+### [material_mgr_fix](./scripts/material_mgr_fix.cs)
+
+Fix MaterialMgr (Game Version >= 2.39) error when change materials outside.
 
 ### [partsedit_add_bone](./scripts/partsedit_add_bone.cs)
 
