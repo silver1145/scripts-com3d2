@@ -323,12 +323,12 @@ Allow setting RenderQueue [-1..5000] (-1 to use render queue from shader) ​​
 
 ### [~~mipmap_extend~~](./deprecated/mipmap_extend.cs)
 
-**Deprecated**: Replace by [GraphicEnhance](https://github.com/silver1145/COM3D2.GraphicEnhance)
+**$\color{Red}{\textsf{Deprecated}}$**: Replace by [GraphicEnhance](https://github.com/silver1145/COM3D2.GraphicEnhance)
 Textures with `mipmap` in the name will enable Mipmap; textures with `linear` in the name will enable Linear.
 
 ### [~~mate_tex_cache~~](./deprecated/mate_tex_cache.cs)
 
-**Deprecated**: Replace by [GraphicEnhance](https://github.com/silver1145/COM3D2.GraphicEnhance)
+**$\color{Red}{\textsf{Deprecated}}$**: Replace by [GraphicEnhance](https://github.com/silver1145/COM3D2.GraphicEnhance)
 Cache textures and materials for COM3D2 and NPRShader.
 
 Configuration `BepinEx/config/MateTexCache.cfg`:
