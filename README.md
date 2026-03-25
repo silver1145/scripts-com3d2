@@ -333,7 +333,7 @@ Cache textures and materials for COM3D2 and NPRShader.
 
 Configuration `BepinEx/config/MateTexCache.cfg`:
 
-1. GolbalEnable: Global Switch
+1. GlobalEnable: Global Switch
 2. IgnoreSkin: Not cache Materials and Textures on body/head
 3. IgnoreHair: Not cache Materials and Textures on hair*
 4. LoadAlwaysCheck: Always check if resource has been modified (instead of only when marked dirty)

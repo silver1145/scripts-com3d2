@@ -25,7 +25,7 @@ public static class MateTexCache
     static byte[] floatOnePattern = new byte[] { 0x00, 0x00, 0x80, 0x3F };                      // 1.0f
     // config
     static public ConfigFile configFile = new ConfigFile(Path.Combine(BepInEx.Paths.ConfigPath, "MateTexCache.cfg"), false);
-    static public ConfigEntry<bool> _golbalEnable = configFile.Bind("MateTexCache Setting", "GolbalEnable", true, "Global Switch");
+    static public ConfigEntry<bool> _globalEnable = configFile.Bind("MateTexCache Setting", "GlobalEnable", true, "Global Switch");
     static public ConfigEntry<bool> _ignoreHair = configFile.Bind("MateTexCache Setting", "IgnoreHair", true, "Ignore Hair");
     static public ConfigEntry<bool> _ignoreSkin = configFile.Bind("MateTexCache Setting", "IgnoreSkin", true, "Ignore Skin");
     static public ConfigEntry<bool> _alwaysCheck = configFile.Bind("MateTexCache Setting", "LoadAlwaysCheck", false, "Always Check");
@@ -33,7 +33,7 @@ public static class MateTexCache
     static public ConfigEntry<int> _tempCacheCapacity = configFile.Bind("MateTexCache Setting", "UnityTempCacheCapacity", 10, new ConfigDescription("Capacity for Temp Cache (will Destroy)", new AcceptableValueRange<int>(0, 50)));
     static public ConfigEntry<string> _mateCacheType = configFile.Bind("MateTexCache Setting", "MateCacheType", "All", new ConfigDescription("MateCache Type", new AcceptableValueList<string>(MateCacheTypes.ToArray())));
     static public ConfigEntry<string> _texCacheType = configFile.Bind("MateTexCache Setting", "TexCacheType", "All", new ConfigDescription("TexCache Type", new AcceptableValueList<string>(TexCacheTypes.ToArray())));
-    static bool golbalEnable = _golbalEnable.Value;
+    static bool globalEnable = _globalEnable.Value;
     static bool ignoreHair = _ignoreHair.Value;
     static bool ignoreSkin = _ignoreSkin.Value;
     static bool alwaysCheck = _alwaysCheck.Value;
@@ -591,7 +591,7 @@ public static class MateTexCache
         mateCache = new UObjectCache<Material>();
         texCache = new UObjectCache<Texture2D>(GetFileContent);
         texTempManage = new Dictionary<BinaryReader, List<Texture2D>>();
-        _golbalEnable.SettingChanged += (s, e) => golbalEnable = _golbalEnable.Value;
+        _globalEnable.SettingChanged += (s, e) => globalEnable = _globalEnable.Value;
         _ignoreHair.SettingChanged += (s, e) => ignoreHair = _ignoreHair.Value;
         _ignoreSkin.SettingChanged += (s, e) => ignoreSkin = _ignoreSkin.Value;
         _alwaysCheck.SettingChanged += (s, e) => alwaysCheck = _alwaysCheck.Value;
@@ -610,7 +610,7 @@ public static class MateTexCache
         texCache = null;
         texTempManage = null;
         configFile = null;
-        _golbalEnable = null;
+        _globalEnable = null;
         _ignoreHair = null;
         _ignoreSkin = null;
         _alwaysCheck = null;
@@ -969,7 +969,7 @@ public static class MateTexCache
         {
             flag = untruncatedData.Skip(index + cachePattern.Length).Take(4).ToArray().SequenceEqual(floatOnePattern);
         }
-        flag &= golbalEnable;
+        flag &= globalEnable;
         if (flag)
         {
             if (GameUty.FileSystem.IsExistentFile(f_strFileName))
@@ -988,7 +988,7 @@ public static class MateTexCache
     public static Texture2D GetTexture2D(string f_strFileName)
     {
         bool flag = texCacheType == TexCacheType_All;
-        flag &= golbalEnable;
+        flag &= globalEnable;
         if (flag)
         {
             if (GameUty.FileSystem.IsExistentFile(f_strFileName))
@@ -1025,7 +1025,7 @@ public static class MateTexCache
         {
             flag = untruncatedData.Skip(index + cachePattern.Length).Take(4).ToArray().SequenceEqual(floatOnePattern);
         }
-        flag &= golbalEnable;
+        flag &= globalEnable;
         if (flag)
         {
             if (GameUty.FileSystem.IsExistentFile(f_strFileName))
@@ -1048,7 +1048,7 @@ public static class MateTexCache
     public static Texture2D AddTexture2D(Texture2D tex, string f_strFileName)
     {
         bool flag = texCacheType == TexCacheType_All && tex != null;
-        flag &= golbalEnable;
+        flag &= globalEnable;
         if (flag)
         {
             if (GameUty.FileSystem.IsExistentFile(f_strFileName))
@@ -1333,7 +1333,7 @@ public static class MateTexCache
                 var scriptLoader = scriptLoaderInfo?.Instance;
                 if (scriptLoader != null)
                 {
-                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_golbalEnable, scriptLoader));
+                    configs.Add(new ConfigurationManager.ConfigSettingEntry(_globalEnable, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_ignoreHair, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_ignoreSkin, scriptLoader));
                     configs.Add(new ConfigurationManager.ConfigSettingEntry(_alwaysCheck, scriptLoader));
